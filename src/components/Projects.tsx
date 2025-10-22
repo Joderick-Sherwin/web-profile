@@ -109,7 +109,7 @@ const Projects = () => {
                 ))}
               </div>
 
-              <div className="flex gap-3 mt-auto">
+              /* <div className="flex gap-3 mt-auto">
                 <Button 
                   variant="outline" 
                   size="sm"
@@ -126,7 +126,7 @@ const Projects = () => {
                   <ExternalLink className="h-4 w-4 mr-2" />
                   Demo
                 </Button>
-              </div>
+              </div> */
             </div>
           ))}
         </div>
