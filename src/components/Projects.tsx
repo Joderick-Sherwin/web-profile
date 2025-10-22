@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink, Github, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const projects = [
@@ -69,11 +69,15 @@ const Projects = () => {
           {projects.map((project, index) => (
             <div
               key={index}
-              className={`card-glass rounded-2xl p-8 shadow-card hover:shadow-glow transition-all duration-500 group hover:scale-[1.05] flex flex-col ${
+              className={`card-glass rounded-2xl p-8 shadow-card hover:shadow-glow transition-all duration-500 group hover:scale-[1.05] flex flex-col relative overflow-hidden ${
                 isVisible ? "animate-scale-in" : "opacity-0"
               }`}
               style={{ animationDelay: `${0.2 + index * 0.15}s` }}
             >
+              {/* AI sparkle indicator */}
+              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <Sparkles className="h-5 w-5 text-primary animate-pulse" />
+              </div>
               <h3 className="text-2xl font-bold mb-4 text-foreground group-hover:text-primary transition-colors duration-300">
                 {project.title}
               </h3>

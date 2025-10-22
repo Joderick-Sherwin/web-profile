@@ -1,5 +1,9 @@
-import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowDown, Github, Linkedin, Mail, Brain, Code, Cpu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import NeuralNetwork from "./NeuralNetwork";
+import CircuitPattern from "./CircuitPattern";
+import AIParticles from "./AIParticles";
+import DataStream from "./DataStream";
 
 const Hero = () => {
   const scrollToSection = (id: string) => {
@@ -11,15 +15,34 @@ const Hero = () => {
       {/* Animated gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--hero-gradient-start))] via-background to-[hsl(var(--hero-gradient-end))]" />
       
-      {/* Animated particles/dots */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary rounded-full animate-float" />
-        <div className="absolute top-1/3 right-1/3 w-3 h-3 bg-secondary rounded-full animate-float" style={{ animationDelay: "1s" }} />
-        <div className="absolute bottom-1/4 left-1/3 w-2 h-2 bg-accent rounded-full animate-float" style={{ animationDelay: "2s" }} />
-        <div className="absolute bottom-1/3 right-1/4 w-3 h-3 bg-primary rounded-full animate-float" style={{ animationDelay: "3s" }} />
+      {/* AI-themed background elements */}
+      <NeuralNetwork />
+      <CircuitPattern />
+      <AIParticles />
+      <DataStream />
+      
+      {/* Floating AI icons */}
+      <div className="absolute inset-0 opacity-10">
+        <Brain className="absolute top-1/4 left-1/4 w-16 h-16 text-primary animate-float" />
+        <Cpu className="absolute top-1/3 right-1/3 w-12 h-12 text-secondary animate-float" style={{ animationDelay: "1s" }} />
+        <Code className="absolute bottom-1/4 left-1/3 w-14 h-14 text-accent animate-float" style={{ animationDelay: "2s" }} />
       </div>
 
       <div className="relative z-10 container mx-auto px-6 text-center">
+        <div className="animate-slide-up mb-6" style={{ animationDelay: "0.05s" }}>
+          <div className="flex justify-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 backdrop-blur-sm neural-glow">
+              <Brain className="h-4 w-4 text-primary animate-pulse" />
+              <span className="text-sm font-semibold text-primary">AI Engineer</span>
+              <div className="flex gap-1">
+                <div className="w-1 h-1 rounded-full bg-primary animate-pulse" />
+                <div className="w-1 h-1 rounded-full bg-primary animate-pulse" style={{ animationDelay: "0.2s" }} />
+                <div className="w-1 h-1 rounded-full bg-primary animate-pulse" style={{ animationDelay: "0.4s" }} />
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <div className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
           <h1 className="text-6xl md:text-8xl font-bold mb-6 text-gradient glow-text">
             Joderick Sherwin J

@@ -8,25 +8,25 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 220 25% 10%;
+    --background: 220 25% 8%;
     --foreground: 210 40% 98%;
 
-    --card: 220 20% 15%;
+    --card: 220 20% 12%;
     --card-foreground: 210 40% 98%;
 
     --popover: 220 20% 15%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 200 95% 55%;
+    --primary: 195 100% 60%;
     --primary-foreground: 220 25% 10%;
 
-    --secondary: 270 60% 60%;
+    --secondary: 270 75% 65%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 220 15% 25%;
     --muted-foreground: 210 20% 65%;
 
-    --accent: 280 70% 65%;
+    --accent: 285 75% 68%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84.2% 60.2%;
@@ -34,17 +34,18 @@ All colors MUST be HSL.
 
     --border: 220 15% 25%;
     --input: 220 15% 20%;
-    --ring: 200 95% 55%;
+    --ring: 195 100% 60%;
 
     --radius: 0.75rem;
     
-    /* Custom portfolio colors */
-    --hero-gradient-start: 220 30% 12%;
-    --hero-gradient-end: 200 50% 20%;
-    --glow-primary: 200 95% 55%;
-    --glow-secondary: 280 70% 65%;
+    /* AI-themed custom colors */
+    --hero-gradient-start: 220 30% 8%;
+    --hero-gradient-end: 195 60% 15%;
+    --neural-glow: 195 100% 60%;
+    --circuit-accent: 285 75% 68%;
+    --data-stream: 270 75% 65%;
     
-    /* Shadows and effects */
+    /* Enhanced shadows and effects */
     --shadow-soft: 0 4px 24px -2px hsl(220 25% 5% / 0.4);
     --shadow-glow: 0 0 40px hsl(var(--glow-primary) / 0.3);
     --shadow-card: 0 8px 32px -4px hsl(220 25% 5% / 0.5);
@@ -93,7 +94,17 @@ All colors MUST be HSL.
   }
   
   .glow-text {
-    text-shadow: 0 0 20px hsl(var(--glow-primary) / 0.5);
+    text-shadow: 
+      0 0 20px hsl(var(--neural-glow) / 0.6),
+      0 0 40px hsl(var(--neural-glow) / 0.4),
+      0 0 60px hsl(var(--neural-glow) / 0.2);
+  }
+  
+  .neural-glow {
+    box-shadow: 
+      0 0 20px hsl(var(--neural-glow) / 0.4),
+      0 0 40px hsl(var(--neural-glow) / 0.2),
+      inset 0 0 20px hsl(var(--neural-glow) / 0.1);
   }
   
   .card-glass {
