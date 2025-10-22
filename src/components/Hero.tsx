@@ -57,7 +57,7 @@ const Hero = () => {
         
         <div className="animate-slide-up" style={{ animationDelay: "0.5s" }}>
           <p className="text-xl md:text-2xl mb-12 text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Transforming ideas into intelligent solutions through Deep Learning, Computer Vision, and NLP
+            Specializing in Neural Networks, Machine Learning, NLP, Computer Vision & Prompt Engineering
           </p>
         </div>
 
@@ -83,7 +83,7 @@ const Hero = () => {
 
         <div className="flex gap-6 justify-center mt-12 animate-slide-up" style={{ animationDelay: "0.9s" }}>
           <a 
-            href="https://github.com/joderick" 
+            href="https://github.com/Joderick-Sherwin" 
             target="_blank" 
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-110"
@@ -91,7 +91,7 @@ const Hero = () => {
             <Github className="h-6 w-6" />
           </a>
           <a 
-            href="https://linkedin.com/in/joderick" 
+            href="https://www.linkedin.com/in/joderick-sherwin-j" 
             target="_blank" 
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-110"

@@ -87,7 +87,7 @@ const Contact = () => {
                   asChild
                   className="flex-1 bg-primary hover:bg-primary/90 shadow-glow transition-all duration-300 hover:scale-105"
                 >
-                  <a href="https://github.com/joderick" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/Joderick-Sherwin" target="_blank" rel="noopener noreferrer">
                     <Github className="mr-2 h-5 w-5" />
                     GitHub
                   </a>
@@ -96,7 +96,7 @@ const Contact = () => {
                   asChild
                   className="flex-1 bg-secondary hover:bg-secondary/90 transition-all duration-300 hover:scale-105"
                 >
-                  <a href="https://linkedin.com/in/joderick" target="_blank" rel="noopener noreferrer">
+                  <a href="https://www.linkedin.com/in/joderick-sherwin-j" target="_blank" rel="noopener noreferrer">
                     <Linkedin className="mr-2 h-5 w-5" />
                     LinkedIn
                   </a>
