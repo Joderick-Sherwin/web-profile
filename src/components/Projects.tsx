@@ -109,24 +109,7 @@ const Projects = () => {
                 ))}
               </div>
 
-              /* <div className="flex gap-3 mt-auto">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="flex-1 border-primary/50 hover:bg-primary/10 transition-all duration-300"
-                >
-                  <Github className="h-4 w-4 mr-2" />
-                  Code
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="flex-1 border-secondary/50 hover:bg-secondary/10 transition-all duration-300"
-                >
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Demo
-                </Button>
-              </div> */
+              
             </div>
           ))}
         </div>
