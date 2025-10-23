@@ -4,6 +4,7 @@ import NeuralNetwork from "./NeuralNetwork";
 import CircuitPattern from "./CircuitPattern";
 import AIParticles from "./AIParticles";
 import DataStream from "./DataStream";
+import FloatingCode from "./FloatingCode";
 
 const Hero = () => {
   const scrollToSection = (id: string) => {
@@ -20,6 +21,7 @@ const Hero = () => {
       <CircuitPattern />
       <AIParticles />
       <DataStream />
+      <FloatingCode />
       
       {/* Floating AI icons */}
       <div className="absolute inset-0 opacity-10">

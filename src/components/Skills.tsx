@@ -66,11 +66,13 @@ const Skills = () => {
             return (
               <div
                 key={index}
-                className={`card-glass rounded-2xl p-6 sm:p-8 shadow-card hover:shadow-glow transition-all duration-500 group hover:scale-[1.02] relative ${
+                className={`card-glass ai-border rounded-2xl p-6 sm:p-8 shadow-card hover:shadow-glow transition-all duration-500 group hover:scale-[1.02] relative overflow-hidden ${
                   isVisible ? "animate-scale-in" : "opacity-0"
                 }`}
                 style={{ animationDelay: `${0.2 + index * 0.1}s` }}
               >
+                {/* Data stream effect on hover */}
+                <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-primary/50 via-accent/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 {/* AI sparkle indicator */}
                 <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <Sparkles className="h-5 w-5 text-primary animate-pulse" />

@@ -107,17 +107,20 @@ const Projects = () => {
 
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {projects.map((project, index) => (
-            <div
-              key={index}
-              className={`card-glass rounded-2xl p-6 sm:p-8 shadow-card hover:shadow-glow transition-all duration-500 group hover:scale-[1.05] flex flex-col relative overflow-hidden ${
-                isVisible ? "animate-scale-in" : "opacity-0"
-              }`}
-              style={{ animationDelay: `${0.2 + index * 0.15}s` }}
-            >
-              {/* AI sparkle indicator */}
-              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-              </div>
+              <div
+                key={index}
+                className={`card-glass ai-border rounded-2xl p-6 sm:p-8 shadow-card hover:shadow-glow transition-all duration-500 group hover:scale-[1.05] flex flex-col relative overflow-hidden ${
+                  isVisible ? "animate-scale-in" : "opacity-0"
+                }`}
+                style={{ animationDelay: `${0.2 + index * 0.15}s` }}
+              >
+                {/* AI sparkle indicator */}
+                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Sparkles className="h-5 w-5 text-primary animate-pulse" />
+                </div>
+                
+                {/* Holographic shimmer effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ animation: "holographic-scan 2s linear infinite" }} />
               <h3 className="text-xl sm:text-2xl font-bold mb-4 text-foreground group-hover:text-primary transition-colors duration-300">
                 {project.title}
               </h3>

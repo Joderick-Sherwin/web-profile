@@ -91,6 +91,12 @@ All colors MUST be HSL.
 @layer utilities {
   .text-gradient {
     @apply bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent;
+    animation: gradient-shift 3s ease infinite;
+  }
+  
+  @keyframes gradient-shift {
+    0%, 100% { filter: hue-rotate(0deg); }
+    50% { filter: hue-rotate(10deg); }
   }
   
   .glow-text {
@@ -98,6 +104,22 @@ All colors MUST be HSL.
       0 0 20px hsl(var(--neural-glow) / 0.6),
       0 0 40px hsl(var(--neural-glow) / 0.4),
       0 0 60px hsl(var(--neural-glow) / 0.2);
+    animation: glow-pulse 2s ease-in-out infinite;
+  }
+  
+  @keyframes glow-pulse {
+    0%, 100% { 
+      text-shadow: 
+        0 0 20px hsl(var(--neural-glow) / 0.6),
+        0 0 40px hsl(var(--neural-glow) / 0.4),
+        0 0 60px hsl(var(--neural-glow) / 0.2);
+    }
+    50% { 
+      text-shadow: 
+        0 0 30px hsl(var(--neural-glow) / 0.8),
+        0 0 60px hsl(var(--neural-glow) / 0.6),
+        0 0 90px hsl(var(--neural-glow) / 0.4);
+    }
   }
   
   .neural-glow {
@@ -105,10 +127,69 @@ All colors MUST be HSL.
       0 0 20px hsl(var(--neural-glow) / 0.4),
       0 0 40px hsl(var(--neural-glow) / 0.2),
       inset 0 0 20px hsl(var(--neural-glow) / 0.1);
+    animation: neural-pulse 3s ease-in-out infinite;
+  }
+  
+  @keyframes neural-pulse {
+    0%, 100% { 
+      box-shadow: 
+        0 0 20px hsl(var(--neural-glow) / 0.4),
+        0 0 40px hsl(var(--neural-glow) / 0.2),
+        inset 0 0 20px hsl(var(--neural-glow) / 0.1);
+    }
+    50% { 
+      box-shadow: 
+        0 0 30px hsl(var(--neural-glow) / 0.6),
+        0 0 60px hsl(var(--neural-glow) / 0.4),
+        inset 0 0 30px hsl(var(--neural-glow) / 0.2);
+    }
   }
   
   .card-glass {
     @apply bg-card/50 backdrop-blur-xl border border-border/50;
+    position: relative;
+  }
+  
+  .holographic-effect {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .holographic-effect::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      hsl(var(--primary) / 0.1) 50%,
+      transparent 70%
+    );
+    animation: holographic-scan 3s linear infinite;
+    pointer-events: none;
+  }
+  
+  @keyframes holographic-scan {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  .ai-border {
+    border: 2px solid transparent;
+    background: linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+                linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent))) border-box;
+  }
+  
+  .glitch-effect {
+    animation: glitch 1s infinite;
+  }
+  
+  @keyframes glitch {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(2px, -2px); }
+    60% { transform: translate(-2px, -2px); }
+    80% { transform: translate(2px, 2px); }
   }
   
   .animate-float {
