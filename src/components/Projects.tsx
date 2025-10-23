@@ -32,6 +32,46 @@ const projects = [
       "Applications in messaging and gaming"
     ],
     technologies: ["Python", "OpenCV", "MediaPipe"]
+  },
+  {
+    title: "Project WraithCast",
+    description: "A real-time wireframe camera system designed to capture and render 3D skeletal representations of environments and objects.",
+    highlights: [
+      "High-speed imaging with depth-sensing technology",
+      "Optimized for rapid rendering and streaming",
+      "Ideal for terrain analysis and AR simulations"
+    ],
+    technologies: ["Python", "Computer Vision", "3D Rendering", "Real-time Processing"]
+  },
+  {
+    title: "RAG Project",
+    description: "Combines document retrieval with generative AI models to provide highly accurate and context-aware responses.",
+    highlights: [
+      "Hybrid retrieval and generation approach",
+      "Improved AI output reliability and relevance",
+      "Suitable for enterprise Q&A and knowledge management"
+    ],
+    technologies: ["Python", "NLP", "Vector Databases", "LLMs", "RAG Architecture"]
+  },
+  {
+    title: "Mental Health Chatbot",
+    description: "Uses natural language processing to provide empathetic support and mental health assistance to users.",
+    highlights: [
+      "Detects emotional cues and responds appropriately",
+      "Provides coping strategies and self-help guidance",
+      "Privacy-focused design for sensitive conversations"
+    ],
+    technologies: ["Python", "NLP", "Sentiment Analysis", "Chatbot Framework"]
+  },
+  {
+    title: "Speech to Text Converter",
+    description: "A PyQt5-based application that transcribes spoken language into written text with high accuracy.",
+    highlights: [
+      "Real-time audio recording and playback",
+      "Waveform visualization for audio monitoring",
+      "User-friendly interface for voice transcription"
+    ],
+    technologies: ["Python", "PyQt5", "Speech Recognition", "Audio Processing"]
   }
 ];
 
@@ -57,19 +97,19 @@ const Projects = () => {
   }, []);
 
   return (
-    <section id="projects" ref={sectionRef} className="py-24 px-6 bg-gradient-to-b from-muted/20 to-background">
+    <section id="projects" ref={sectionRef} className="py-24 px-4 sm:px-6 bg-gradient-to-b from-muted/20 to-background">
       <div className="container mx-auto max-w-6xl">
         <div className={`transition-all duration-700 ${isVisible ? "animate-slide-up" : "opacity-0"}`}>
-          <h2 className="text-4xl md:text-5xl font-bold mb-16 text-center">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-16 text-center">
             <span className="text-gradient">Featured Projects</span>
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {projects.map((project, index) => (
             <div
               key={index}
-              className={`card-glass rounded-2xl p-8 shadow-card hover:shadow-glow transition-all duration-500 group hover:scale-[1.05] flex flex-col relative overflow-hidden ${
+              className={`card-glass rounded-2xl p-6 sm:p-8 shadow-card hover:shadow-glow transition-all duration-500 group hover:scale-[1.05] flex flex-col relative overflow-hidden ${
                 isVisible ? "animate-scale-in" : "opacity-0"
               }`}
               style={{ animationDelay: `${0.2 + index * 0.15}s` }}
@@ -78,11 +118,11 @@ const Projects = () => {
               <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <Sparkles className="h-5 w-5 text-primary animate-pulse" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-foreground group-hover:text-primary transition-colors duration-300">
+              <h3 className="text-xl sm:text-2xl font-bold mb-4 text-foreground group-hover:text-primary transition-colors duration-300">
                 {project.title}
               </h3>
               
-              <p className="text-foreground/80 mb-6 leading-relaxed flex-grow">
+              <p className="text-sm sm:text-base text-foreground/80 mb-6 leading-relaxed flex-grow">
                 {project.description}
               </p>
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Briefcase, Calendar } from "lucide-react";
+import { Briefcase, Calendar, Sparkles, Cpu } from "lucide-react";
 
 const experiences = [
   {
@@ -48,10 +48,16 @@ const Experience = () => {
   }, []);
 
   return (
-    <section id="experience" ref={sectionRef} className="py-24 px-6 bg-gradient-to-b from-background to-muted/20">
-      <div className="container mx-auto max-w-5xl">
+    <section id="experience" ref={sectionRef} className="relative py-24 px-4 sm:px-6 bg-gradient-to-b from-background to-muted/20 overflow-hidden">
+      {/* AI-themed background elements */}
+      <div className="absolute inset-0 opacity-20">
+        <Cpu className="absolute top-1/3 right-10 w-12 h-12 sm:w-16 sm:h-16 text-secondary animate-float" style={{ animationDelay: "0.5s" }} />
+        <Sparkles className="absolute bottom-1/4 left-10 w-10 h-10 sm:w-14 sm:h-14 text-accent animate-float" style={{ animationDelay: "1.5s" }} />
+      </div>
+
+      <div className="container mx-auto max-w-5xl relative z-10">
         <div className={`transition-all duration-700 ${isVisible ? "animate-slide-up" : "opacity-0"}`}>
-          <h2 className="text-4xl md:text-5xl font-bold mb-16 text-center">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-16 text-center">
             <span className="text-gradient">Experience</span>
           </h2>
         </div>
@@ -72,26 +78,30 @@ const Experience = () => {
                 {/* Timeline dot */}
                 <div className="absolute left-6 top-6 w-5 h-5 rounded-full bg-primary shadow-glow hidden md:block" />
 
-                <div className="md:ml-20 card-glass rounded-2xl p-8 shadow-card hover:shadow-glow transition-all duration-500 group hover:scale-[1.02]">
-                  <div className="flex items-start justify-between flex-wrap gap-4 mb-4">
+                <div className="md:ml-20 card-glass rounded-2xl p-6 sm:p-8 shadow-card hover:shadow-glow transition-all duration-500 group hover:scale-[1.02] relative">
+                  {/* AI sparkle indicator */}
+                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <Sparkles className="h-5 w-5 text-primary animate-pulse" />
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
                     <div>
-                      <h3 className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
+                      <h3 className="text-xl sm:text-2xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
                         {exp.title}
                       </h3>
                       <div className="flex items-center gap-2 text-secondary font-semibold mt-1">
                         <Briefcase className="h-4 w-4" />
-                        <span>{exp.company}</span>
+                        <span className="text-sm sm:text-base">{exp.company}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Calendar className="h-4 w-4" />
-                      <span>{exp.period}</span>
+                      <span className="text-sm sm:text-base">{exp.period}</span>
                     </div>
                   </div>
 
                   <ul className="space-y-3">
                     {exp.responsibilities.map((resp, idx) => (
-                      <li key={idx} className="flex gap-3 text-foreground/80">
+                      <li key={idx} className="flex gap-3 text-sm sm:text-base text-foreground/80">
                         <span className="text-primary mt-1.5 flex-shrink-0">▹</span>
                         <span>{resp}</span>
                       </li>
