@@ -20,13 +20,13 @@ All colors MUST be HSL.
     --primary: 195 100% 60%;
     --primary-foreground: 220 25% 10%;
 
-    --secondary: 270 75% 65%;
+    --secondary: 210 85% 60%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 220 15% 25%;
     --muted-foreground: 210 20% 65%;
 
-    --accent: 285 75% 68%;
+    --accent: 180 80% 55%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84.2% 60.2%;
@@ -42,8 +42,8 @@ All colors MUST be HSL.
     --hero-gradient-start: 220 30% 8%;
     --hero-gradient-end: 195 60% 15%;
     --neural-glow: 195 100% 60%;
-    --circuit-accent: 285 75% 68%;
-    --data-stream: 270 75% 65%;
+    --circuit-accent: 180 80% 55%;
+    --data-stream: 210 85% 60%;
     
     /* Enhanced shadows and effects */
     --shadow-soft: 0 4px 24px -2px hsl(220 25% 5% / 0.4);
