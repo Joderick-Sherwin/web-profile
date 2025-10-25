@@ -276,4 +276,49 @@ All colors MUST be HSL.
       transform: scale(1);
     }
   }
+  
+  /* Garage door animations */
+  .garage-door-close {
+    animation: garageDoorClose 1s ease-in-out forwards, garageDoorOpen 1s ease-in-out 1s forwards;
+  }
+  
+  .garage-door-close-bottom {
+    animation: garageDoorCloseBottom 1s ease-in-out forwards, garageDoorOpenBottom 1s ease-in-out 1s forwards;
+  }
+  
+  @keyframes garageDoorClose {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes garageDoorOpen {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-100%);
+    }
+  }
+  
+  @keyframes garageDoorCloseBottom {
+    0% {
+      transform: translateY(100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes garageDoorOpenBottom {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(100%);
+    }
+  }
 }

@@ -7,6 +7,7 @@ import Contact from "@/components/Contact";
 import MatrixRain from "@/components/MatrixRain";
 import HolographicOverlay from "@/components/HolographicOverlay";
 import AIAssistantIndicator from "@/components/AIAssistantIndicator";
+import AITransition from "@/components/AITransition";
 
 const Index = () => {
   return (
@@ -15,6 +16,7 @@ const Index = () => {
       <MatrixRain />
       <HolographicOverlay />
       <AIAssistantIndicator />
+      <AITransition />
       
       <Hero />
       <About />
