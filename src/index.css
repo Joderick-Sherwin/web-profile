@@ -86,9 +86,9 @@ All colors MUST be HSL.
   
   body.ai-activated {
     --background: 220 30% 6%;
-    --primary: 190 100% 55%;
-    --neural-glow: 190 100% 55%;
-    --accent: 200 90% 60%;
+    --primary: 120 100% 50%;
+    --neural-glow: 120 100% 50%;
+    --accent: 140 85% 55%;
   }
   
   html {
