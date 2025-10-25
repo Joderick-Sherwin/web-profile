@@ -1,12 +1,37 @@
 import { ArrowDown, Github, Linkedin, Mail, Brain, Code, Cpu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { useAI } from "@/contexts/AIContext";
 import NeuralNetwork from "./NeuralNetwork";
 import CircuitPattern from "./CircuitPattern";
 import AIParticles from "./AIParticles";
 import DataStream from "./DataStream";
 import FloatingCode from "./FloatingCode";
 
+const AI_QUOTES = [
+  "The question of whether a computer can think is no more interesting than the question of whether a submarine can swim. - Edsger Dijkstra",
+  "Artificial intelligence is the new electricity. - Andrew Ng",
+  "Machine learning is the science of getting computers to learn without being explicitly programmed. - Arthur Samuel",
+  "The key to artificial intelligence has always been the representation. - Jeff Hawkins",
+  "By far, the greatest danger of Artificial Intelligence is that people conclude too early that they understand it. - Eliezer Yudkowsky",
+  "AI is not just about making machines intelligent; it's about amplifying human potential.",
+  "In the age of AI, those who can bridge human creativity with machine intelligence will shape the future.",
+  "Neural networks don't just process data; they discover patterns invisible to the human eye.",
+];
+
 const Hero = () => {
+  const { isAIActive } = useAI();
+  const [showMessage, setShowMessage] = useState(false);
+  const [currentQuote, setCurrentQuote] = useState("");
+
+  useEffect(() => {
+    if (isAIActive) {
+      setShowMessage(true);
+      setCurrentQuote(AI_QUOTES[Math.floor(Math.random() * AI_QUOTES.length)]);
+    } else {
+      setShowMessage(false);
+    }
+  }, [isAIActive]);
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
@@ -49,6 +74,24 @@ const Hero = () => {
           <h1 className="text-6xl md:text-8xl font-bold mb-6 text-gradient glow-text">
             Joderick Sherwin J
           </h1>
+          
+          {/* AI Activation Message */}
+          {showMessage && (
+            <div className="animate-fade-in mt-4 mb-4">
+              <p className="text-lg md:text-xl font-semibold text-accent glow-text">
+                AI Systems Activated — Think Smart, Move Smart.
+              </p>
+            </div>
+          )}
+          
+          {/* Random AI Quote */}
+          {showMessage && currentQuote && (
+            <div className="animate-fade-in mt-6 mb-4 max-w-3xl mx-auto" style={{ animationDelay: "0.3s" }}>
+              <p className="text-sm md:text-base italic text-muted-foreground border-l-4 border-accent pl-4 py-2">
+                {currentQuote}
+              </p>
+            </div>
+          )}
         </div>
         
         <div className="animate-slide-up" style={{ animationDelay: "0.3s" }}>

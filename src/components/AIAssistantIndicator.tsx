@@ -1,8 +1,10 @@
 import { Brain, Sparkles } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useAI } from "@/contexts/AIContext";
 
 const AIAssistantIndicator = () => {
   const [pulse, setPulse] = useState(false);
+  const { isAIActive, toggleAI } = useAI();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -14,7 +16,12 @@ const AIAssistantIndicator = () => {
   }, []);
 
   return (
-    <div className="fixed bottom-8 right-8 z-50 pointer-events-none">
+    <div 
+      className="fixed bottom-8 right-8 z-50 cursor-pointer transition-transform hover:scale-110"
+      onClick={toggleAI}
+      role="button"
+      aria-label="Toggle AI Mode"
+    >
       <div className="relative">
         {/* Outer glow ring */}
         <div 
@@ -24,7 +31,11 @@ const AIAssistantIndicator = () => {
         />
         
         {/* Main indicator */}
-        <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary/50 flex items-center justify-center shadow-glow border-2 border-primary/50">
+        <div className={`relative w-16 h-16 rounded-full flex items-center justify-center shadow-glow border-2 transition-all duration-500 ${
+          isAIActive 
+            ? 'bg-gradient-to-br from-accent to-secondary border-accent/50' 
+            : 'bg-gradient-to-br from-primary to-primary/50 border-primary/50'
+        }`}>
           <Brain className="w-8 h-8 text-primary-foreground animate-pulse" />
           
           {/* Sparkle effect */}
@@ -43,7 +54,11 @@ const AIAssistantIndicator = () => {
       
       {/* Status text */}
       <div className="mt-2 text-center">
-        <p className="text-xs font-mono text-primary animate-pulse">AI Active</p>
+        <p className={`text-xs font-mono transition-colors duration-500 ${
+          isAIActive ? 'text-accent animate-pulse' : 'text-primary animate-pulse'
+        }`}>
+          {isAIActive ? 'AI Engaged' : 'AI Active'}
+        </p>
       </div>
     </div>
   );

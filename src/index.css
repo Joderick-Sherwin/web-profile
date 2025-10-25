@@ -81,6 +81,13 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
     scroll-behavior: smooth;
+    transition: background-color 0.8s ease, color 0.8s ease;
+  }
+  
+  body.ai-activated {
+    --background: 220 30% 6%;
+    --primary: 285 75% 68%;
+    --neural-glow: 285 75% 68%;
   }
   
   html {
