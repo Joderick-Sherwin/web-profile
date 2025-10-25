@@ -57,7 +57,7 @@ const AIAssistantIndicator = () => {
         <p className={`text-xs font-mono transition-colors duration-500 ${
           isAIActive ? 'text-accent animate-pulse' : 'text-primary animate-pulse'
         }`}>
-          {isAIActive ? 'AI Engaged' : 'AI Active'}
+          {isAIActive ? 'AI Engaged' : 'AI Disengaged'}
         </p>
       </div>
     </div>
