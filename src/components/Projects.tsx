@@ -8,6 +8,7 @@ const projects = [
   {
     title: "TerraDefender - Military IPB System",
     description: "Engineered a Deep Learning-based system for analyzing terrain, infrastructure, and environmental conditions from aerial and satellite imagery.",
+    readOutDetails: "TerraDefender is a military intelligence preparation system I engineered using deep learning. It analyzes terrain, infrastructure, and environmental conditions from aerial and satellite imagery. The system uses advanced neural networks for terrain classification and building extraction, with multithreading for optimized processing. It generates geospatially accurate enhanced maps that support military operations.",
     highlights: [
       "Built models for terrain classification and building extraction",
       "Implemented multithreading for optimized processing",
@@ -18,6 +19,7 @@ const projects = [
   {
     title: "Analyst Recommendation System",
     description: "Developed an AI-driven recommendation system to match analysts with projects based on expertise, performance, and task context.",
+    readOutDetails: "This is an AI-driven recommendation system I developed to intelligently match analysts with projects. It considers their expertise, past performance, and the specific context of each task. Using machine learning algorithms, it automates the analyst selection process and provides dynamic real-time recommendations, significantly improving project efficiency and analyst utilization.",
     highlights: [
       "Utilized ML algorithms for optimal assignments",
       "Automated analyst selection process",
@@ -28,6 +30,7 @@ const projects = [
   {
     title: "Animoji Simulation Project",
     description: "Developed a real-time facial tracking system using computer vision to replicate user expressions on 3D animated characters.",
+    readOutDetails: "The Animoji Simulation Project is a real-time facial tracking system I built using computer vision. It captures user expressions and replicates them on 3D animated characters instantly. Using OpenCV and MediaPipe, it tracks facial movements with high precision, enabling interactive personalized animations. This technology has applications in messaging platforms, gaming, and virtual communication.",
     highlights: [
       "Real-time facial expression tracking",
       "Interactive personalized animations",
@@ -38,6 +41,7 @@ const projects = [
   {
     title: "Project WraithCast",
     description: "A real-time wireframe camera system designed to capture and render 3D skeletal representations of environments and objects.",
+    readOutDetails: "Project WraithCast is a cutting-edge real-time wireframe camera system I designed. It captures and renders 3D skeletal representations of environments and objects using high-speed imaging with depth-sensing technology. The system is optimized for rapid rendering and streaming, making it ideal for terrain analysis, augmented reality simulations, and tactical applications where understanding spatial structure is critical.",
     highlights: [
       "High-speed imaging with depth-sensing technology",
       "Optimized for rapid rendering and streaming",
@@ -48,6 +52,7 @@ const projects = [
   {
     title: "RAG Project",
     description: "Combines document retrieval with generative AI models to provide highly accurate and context-aware responses.",
+    readOutDetails: "This RAG project implements a Retrieval Augmented Generation system that combines document retrieval with generative AI models. It uses vector databases to find relevant information and feeds it to large language models for highly accurate, context-aware responses. This hybrid approach significantly improves AI output reliability and relevance, making it perfect for enterprise question-answering systems and knowledge management platforms.",
     highlights: [
       "Hybrid retrieval and generation approach",
       "Improved AI output reliability and relevance",
@@ -58,6 +63,7 @@ const projects = [
   {
     title: "Mental Health Chatbot",
     description: "Uses natural language processing to provide empathetic support and mental health assistance to users.",
+    readOutDetails: "The Mental Health Chatbot is a compassionate AI system I developed using natural language processing. It detects emotional cues in user messages and responds with appropriate empathy and support. The chatbot provides evidence-based coping strategies and self-help guidance while maintaining a privacy-focused design for sensitive conversations. It uses sentiment analysis to understand user emotional states and adapt responses accordingly.",
     highlights: [
       "Detects emotional cues and responds appropriately",
       "Provides coping strategies and self-help guidance",
@@ -68,6 +74,7 @@ const projects = [
   {
     title: "Speech to Text Converter",
     description: "A PyQt5-based application that transcribes spoken language into written text with high accuracy.",
+    readOutDetails: "This Speech to Text Converter is a desktop application I built using PyQt5 that transcribes spoken language into written text with high accuracy. It features real-time audio recording and playback, along with waveform visualization for monitoring audio quality. The user-friendly interface makes voice transcription accessible and efficient, utilizing advanced speech recognition algorithms for reliable text conversion.",
     highlights: [
       "Real-time audio recording and playback",
       "Waveform visualization for audio monitoring",
@@ -90,17 +97,24 @@ const Projects = () => {
     window.speechSynthesis.cancel();
     setIsSpeaking(true);
 
-    const textToSpeak = `
-      ${project.title}. 
-      ${project.description}. 
-      Key Highlights: ${project.highlights.join('. ')}. 
-      Technologies used: ${project.technologies.join(', ')}.
-    `;
-
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-    utterance.rate = 0.9;
-    utterance.pitch = 1;
+    const utterance = new SpeechSynthesisUtterance(project.readOutDetails);
+    
+    // More natural voice settings
+    utterance.rate = 0.85; // Slightly slower for clarity
+    utterance.pitch = 0.95; // Slightly lower pitch for natural sound
     utterance.volume = 1;
+    
+    // Try to use a more natural voice if available
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice = voices.find(voice => 
+      voice.name.includes('Natural') || 
+      voice.name.includes('Enhanced') ||
+      voice.name.includes('Premium') ||
+      voice.lang.startsWith('en')
+    );
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
+    }
 
     utterance.onend = () => {
       setIsSpeaking(false);
