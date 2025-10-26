@@ -3,6 +3,7 @@ import { ExternalLink, Github, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAI } from "@/contexts/AIContext";
 import { toast } from "sonner";
+import ProjectsNetwork from "./ProjectsNetwork";
 
 const projects = [
   {
@@ -153,6 +154,11 @@ const Projects = () => {
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-16 text-center">
             <span className="text-gradient">Featured Projects</span>
           </h2>
+        </div>
+
+        {/* Network Graph Visualization */}
+        <div className={`mb-16 transition-all duration-700 ${isVisible ? "animate-fade-in" : "opacity-0"}`} style={{ animationDelay: "0.3s" }}>
+          <ProjectsNetwork />
         </div>
 
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">

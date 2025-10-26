@@ -8,6 +8,7 @@ interface Particle {
   speedY: number;
   opacity: number;
   color: string;
+  trail: Array<{ x: number; y: number; opacity: number }>;
 }
 
 const AIParticles = () => {
@@ -46,6 +47,7 @@ const AIParticles = () => {
         speedY: (Math.random() - 0.5) * 0.3,
         opacity: Math.random() * 0.5 + 0.2,
         color: colors[Math.floor(Math.random() * colors.length)],
+        trail: [],
       });
     }
 
@@ -63,19 +65,27 @@ const AIParticles = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       particles.forEach((particle) => {
+        // Add current position to trail
+        particle.trail.push({ x: particle.x, y: particle.y, opacity: 0.8 });
+        
+        // Limit trail length
+        if (particle.trail.length > 10) {
+          particle.trail.shift();
+        }
+
         // Move particle
         particle.x += particle.speedX;
         particle.y += particle.speedY;
 
-        // Mouse interaction
+        // Mouse interaction - stronger attraction/repulsion
         const dx = mouseX - particle.x;
         const dy = mouseY - particle.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance < 100) {
-          const force = (100 - distance) / 100;
-          particle.x -= (dx / distance) * force * 2;
-          particle.y -= (dy / distance) * force * 2;
+        if (distance < 150) {
+          const force = (150 - distance) / 150;
+          particle.x -= (dx / distance) * force * 3;
+          particle.y -= (dy / distance) * force * 3;
         }
 
         // Bounce off edges
@@ -88,17 +98,33 @@ const AIParticles = () => {
           particle.y = Math.max(0, Math.min(canvas.height, particle.y));
         }
 
+        // Draw trail with glowing effect
+        particle.trail.forEach((point, index) => {
+          const trailOpacity = (index / particle.trail.length) * 0.5;
+          const trailSize = particle.size * (index / particle.trail.length);
+          
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, trailSize, 0, Math.PI * 2);
+          ctx.fillStyle = particle.color.replace(")", `, ${trailOpacity})`).replace("hsl", "hsla");
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = particle.color;
+          ctx.fill();
+        });
+
         // Draw particle
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fillStyle = particle.color.replace(")", `, ${particle.opacity})`).replace("hsl", "hsla");
-        ctx.fill();
-
-        // Add glow effect
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 20;
         ctx.shadowColor = particle.color;
         ctx.fill();
         ctx.shadowBlur = 0;
+
+        // Update trail opacities
+        particle.trail = particle.trail.map(point => ({
+          ...point,
+          opacity: point.opacity * 0.95
+        }));
       });
 
       requestAnimationFrame(animate);

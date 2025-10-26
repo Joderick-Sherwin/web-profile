@@ -8,6 +8,7 @@ import MatrixRain from "@/components/MatrixRain";
 import HolographicOverlay from "@/components/HolographicOverlay";
 import AIAssistantIndicator from "@/components/AIAssistantIndicator";
 import AITransition from "@/components/AITransition";
+import MLDemo from "@/components/MLDemo";
 
 const Index = () => {
   return (
@@ -17,6 +18,7 @@ const Index = () => {
       <HolographicOverlay />
       <AIAssistantIndicator />
       <AITransition />
+      <MLDemo />
       
       <Hero />
       <About />

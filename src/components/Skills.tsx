@@ -71,6 +71,22 @@ const Skills = () => {
                 }`}
                 style={{ animationDelay: `${0.2 + index * 0.1}s` }}
               >
+                {/* Animated decision boundary on hover */}
+                <svg className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ mixBlendMode: "screen" }}>
+                  <defs>
+                    <linearGradient id={`boundary-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{ stopColor: "hsl(200, 95%, 55%)", stopOpacity: 0.3 }}>
+                        <animate attributeName="stop-opacity" values="0.3;0.6;0.3" dur="2s" repeatCount="indefinite" />
+                      </stop>
+                      <stop offset="100%" style={{ stopColor: "hsl(280, 70%, 65%)", stopOpacity: 0.3 }}>
+                        <animate attributeName="stop-opacity" values="0.3;0.6;0.3" dur="2s" repeatCount="indefinite" begin="0.5s" />
+                      </stop>
+                    </linearGradient>
+                  </defs>
+                  <path d="M 0,50 Q 50,20 100,50 T 200,50" fill="none" stroke={`url(#boundary-${index})`} strokeWidth="2" opacity="0.5">
+                    <animate attributeName="d" values="M 0,50 Q 50,20 100,50 T 200,50;M 0,50 Q 50,80 100,50 T 200,50;M 0,50 Q 50,20 100,50 T 200,50" dur="3s" repeatCount="indefinite" />
+                  </path>
+                </svg>
                 {/* Data stream effect on hover */}
                 <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-primary/50 via-accent/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 {/* AI sparkle indicator */}
