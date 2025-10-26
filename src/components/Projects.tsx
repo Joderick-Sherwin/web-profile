@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { ExternalLink, Github, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAI } from "@/contexts/AIContext";
+import { toast } from "sonner";
 
 const projects = [
   {
@@ -78,6 +80,40 @@ const projects = [
 const Projects = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const { isAIActive } = useAI();
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  const speakProjectDetails = (project: typeof projects[0]) => {
+    if (!isAIActive) return;
+
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+    setIsSpeaking(true);
+
+    const textToSpeak = `
+      ${project.title}. 
+      ${project.description}. 
+      Key Highlights: ${project.highlights.join('. ')}. 
+      Technologies used: ${project.technologies.join(', ')}.
+    `;
+
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    utterance.onend = () => {
+      setIsSpeaking(false);
+    };
+
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      toast.error("Failed to read project details");
+    };
+
+    window.speechSynthesis.speak(utterance);
+    toast.success("Reading project details...");
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -109,9 +145,10 @@ const Projects = () => {
           {projects.map((project, index) => (
               <div
                 key={index}
+                onClick={() => speakProjectDetails(project)}
                 className={`card-glass ai-border rounded-2xl p-6 sm:p-8 shadow-card hover:shadow-glow transition-all duration-500 group hover:scale-[1.05] flex flex-col relative overflow-hidden ${
                   isVisible ? "animate-scale-in" : "opacity-0"
-                }`}
+                } ${isAIActive ? "cursor-pointer" : ""}`}
                 style={{ animationDelay: `${0.2 + index * 0.15}s` }}
               >
                 {/* AI sparkle indicator */}
