@@ -54,9 +54,9 @@ const ProjectsNetwork = () => {
         title: project.title,
         x: centerX + Math.cos(angle) * radius,
         y: centerY + Math.sin(angle) * radius,
-        vx: (Math.random() - 0.5) * 0.2,
-        vy: (Math.random() - 0.5) * 0.2,
-        radius: 30,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        radius: 35,
         color: project.color,
         technologies: project.technologies,
       };
@@ -68,7 +68,6 @@ const ProjectsNetwork = () => {
       const y = e.clientY - rect.top;
       setMousePos({ x, y });
 
-      // Check if hovering over a node
       let foundHover = false;
       nodes.forEach(node => {
         const distance = Math.sqrt(Math.pow(x - node.x, 2) + Math.pow(y - node.y, 2));
@@ -83,10 +82,59 @@ const ProjectsNetwork = () => {
     canvas.addEventListener("mousemove", handleMouseMove);
 
     const animate = () => {
-      ctx.fillStyle = "rgba(22, 22, 26, 0.1)";
+      ctx.fillStyle = "rgba(22, 22, 26, 0.15)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw connections based on shared technologies
+      // Apply forces to nodes
+      nodes.forEach((node, i) => {
+        // Mouse repulsion force
+        const dx = node.x - mousePos.x;
+        const dy = node.y - mousePos.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 150 && distance > 0) {
+          const force = (150 - distance) / 150;
+          node.vx += (dx / distance) * force * 0.5;
+          node.vy += (dy / distance) * force * 0.5;
+        }
+
+        // Node-to-node repulsion
+        nodes.forEach((otherNode, j) => {
+          if (i === j) return;
+          const dx = node.x - otherNode.x;
+          const dy = node.y - otherNode.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 100 && distance > 0) {
+            const force = (100 - distance) / 1000;
+            node.vx += (dx / distance) * force;
+            node.vy += (dy / distance) * force;
+          }
+        });
+
+        // Spring force to center
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const toCenterX = centerX - node.x;
+        const toCenterY = centerY - node.y;
+        node.vx += toCenterX * 0.0002;
+        node.vy += toCenterY * 0.0002;
+
+        // Apply velocity with damping
+        node.vx *= 0.95;
+        node.vy *= 0.95;
+        node.x += node.vx;
+        node.y += node.vy;
+
+        // Keep nodes within bounds
+        const padding = 60;
+        if (node.x < padding) { node.x = padding; node.vx *= -0.5; }
+        if (node.x > canvas.width - padding) { node.x = canvas.width - padding; node.vx *= -0.5; }
+        if (node.y < padding) { node.y = padding; node.vy *= -0.5; }
+        if (node.y > canvas.height - padding) { node.y = canvas.height - padding; node.vy *= -0.5; }
+      });
+
+      // Draw connections
       nodes.forEach((node, i) => {
         nodes.forEach((otherNode, j) => {
           if (i >= j) return;
@@ -99,74 +147,73 @@ const ProjectsNetwork = () => {
             const dx = node.x - otherNode.x;
             const dy = node.y - otherNode.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
-            const opacity = sharedTech.length / 5;
+            const isConnected = hoveredNode === i || hoveredNode === j;
+            const opacity = (sharedTech.length / 5) * (isConnected ? 1 : 0.5);
 
             ctx.beginPath();
             ctx.moveTo(node.x, node.y);
             ctx.lineTo(otherNode.x, otherNode.y);
-            ctx.strokeStyle = `rgba(79, 209, 255, ${opacity * 0.4})`;
-            ctx.lineWidth = hoveredNode === i || hoveredNode === j ? 3 : 1.5;
+            ctx.strokeStyle = `hsla(var(--primary), ${opacity})`;
+            ctx.lineWidth = isConnected ? 3 : 1.5;
             ctx.stroke();
 
-            // Draw shared tech label at midpoint
-            if (hoveredNode === i || hoveredNode === j) {
+            if (isConnected) {
               const midX = (node.x + otherNode.x) / 2;
               const midY = (node.y + otherNode.y) / 2;
-              ctx.fillStyle = "rgba(79, 209, 255, 0.8)";
-              ctx.font = "10px monospace";
-              ctx.fillText(sharedTech[0], midX, midY);
+              ctx.fillStyle = "hsla(var(--primary), 0.9)";
+              ctx.font = "11px monospace";
+              ctx.textAlign = "center";
+              ctx.fillText(sharedTech.join(", "), midX, midY);
             }
           }
         });
       });
 
-      // Update and draw nodes
+      // Draw nodes
       nodes.forEach(node => {
-        // Gentle floating motion
-        node.x += node.vx;
-        node.y += node.vy;
-
-        // Bounce off edges with padding
-        const padding = 50;
-        if (node.x < padding || node.x > canvas.width - padding) node.vx *= -1;
-        if (node.y < padding || node.y > canvas.height - padding) node.vy *= -1;
-
         const isHovered = hoveredNode === node.id;
-        const size = isHovered ? node.radius * 1.3 : node.radius;
+        const size = isHovered ? node.radius * 1.4 : node.radius;
 
         // Draw glow
-        const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size + 10);
-        gradient.addColorStop(0, node.color.replace(")", ", 0.6)").replace("hsl", "hsla"));
-        gradient.addColorStop(1, node.color.replace(")", ", 0)").replace("hsl", "hsla"));
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, size + 10, 0, Math.PI * 2);
-        ctx.fill();
+        if (isHovered) {
+          const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size + 20);
+          gradient.addColorStop(0, node.color.replace(")", ", 0.8)").replace("hsl", "hsla"));
+          gradient.addColorStop(1, node.color.replace(")", ", 0)").replace("hsl", "hsla"));
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, size + 20, 0, Math.PI * 2);
+          ctx.fill();
+        }
 
         // Draw node
         ctx.beginPath();
         ctx.arc(node.x, node.y, size, 0, Math.PI * 2);
         ctx.fillStyle = node.color;
+        ctx.shadowBlur = isHovered ? 15 : 5;
+        ctx.shadowColor = node.color;
         ctx.fill();
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
-        ctx.lineWidth = 2;
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
+        ctx.lineWidth = isHovered ? 3 : 2;
         ctx.stroke();
 
         // Draw title
         ctx.fillStyle = "white";
-        ctx.font = isHovered ? "bold 14px sans-serif" : "12px sans-serif";
+        ctx.font = isHovered ? "bold 13px sans-serif" : "11px sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
+        ctx.shadowBlur = 3;
+        ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
         const words = node.title.split(" ");
         words.forEach((word, i) => {
-          ctx.fillText(word, node.x, node.y + (i - words.length / 2 + 0.5) * 16);
+          ctx.fillText(word, node.x, node.y + (i - words.length / 2 + 0.5) * 15);
         });
+        ctx.shadowBlur = 0;
 
-        // Show tech count on hover
         if (isHovered) {
           ctx.font = "10px monospace";
-          ctx.fillStyle = "rgba(79, 209, 255, 1)";
-          ctx.fillText(`${node.technologies.length} techs`, node.x, node.y + size + 20);
+          ctx.fillStyle = node.color;
+          ctx.fillText(`${node.technologies.length} technologies`, node.x, node.y + size + 25);
         }
       });
 
@@ -179,7 +226,7 @@ const ProjectsNetwork = () => {
       window.removeEventListener("resize", resizeCanvas);
       canvas.removeEventListener("mousemove", handleMouseMove);
     };
-  }, [hoveredNode]);
+  }, [hoveredNode, mousePos.x, mousePos.y]);
 
   return (
     <div className="relative w-full h-[600px] card-glass ai-border rounded-2xl overflow-hidden">
