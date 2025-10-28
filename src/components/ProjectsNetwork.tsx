@@ -8,9 +8,11 @@ interface ProjectNode {
   y: number;
   vx: number;
   vy: number;
-  radius: number;
   color: string;
   technologies: string[];
+  expanded: boolean;
+  targetExpanded: boolean;
+  expansionProgress: number;
 }
 
 const projects = [
@@ -56,9 +58,11 @@ const ProjectsNetwork = () => {
         y: centerY + Math.sin(angle) * radius,
         vx: (Math.random() - 0.5) * 0.5,
         vy: (Math.random() - 0.5) * 0.5,
-        radius: 35,
         color: project.color,
         technologies: project.technologies,
+        expanded: false,
+        targetExpanded: false,
+        expansionProgress: 0,
       };
     });
 
@@ -71,9 +75,13 @@ const ProjectsNetwork = () => {
       let foundHover = false;
       nodes.forEach(node => {
         const distance = Math.sqrt(Math.pow(x - node.x, 2) + Math.pow(y - node.y, 2));
-        if (distance < node.radius) {
+        const hoverRadius = 60 + (node.expanded ? node.technologies.length * 15 : 0);
+        if (distance < hoverRadius) {
           setHoveredNode(node.id);
+          node.targetExpanded = true;
           foundHover = true;
+        } else {
+          node.targetExpanded = false;
         }
       });
       if (!foundHover) setHoveredNode(null);
@@ -87,6 +95,15 @@ const ProjectsNetwork = () => {
 
       // Apply forces to nodes
       nodes.forEach((node, i) => {
+        // Smooth expansion animation
+        if (node.targetExpanded && node.expansionProgress < 1) {
+          node.expansionProgress = Math.min(1, node.expansionProgress + 0.1);
+          node.expanded = node.expansionProgress > 0.5;
+        } else if (!node.targetExpanded && node.expansionProgress > 0) {
+          node.expansionProgress = Math.max(0, node.expansionProgress - 0.1);
+          node.expanded = node.expansionProgress > 0.5;
+        }
+
         // Mouse repulsion force
         const dx = node.x - mousePos.x;
         const dy = node.y - mousePos.y;
@@ -134,87 +151,137 @@ const ProjectsNetwork = () => {
         if (node.y > canvas.height - padding) { node.y = canvas.height - padding; node.vy *= -0.5; }
       });
 
-      // Draw connections
-      nodes.forEach((node, i) => {
-        nodes.forEach((otherNode, j) => {
-          if (i >= j) return;
-
-          const sharedTech = node.technologies.filter(tech =>
-            otherNode.technologies.includes(tech)
-          );
-
-          if (sharedTech.length > 0) {
-            const dx = node.x - otherNode.x;
-            const dy = node.y - otherNode.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            const isConnected = hoveredNode === i || hoveredNode === j;
-            const opacity = (sharedTech.length / 5) * (isConnected ? 1 : 0.5);
-
-            ctx.beginPath();
-            ctx.moveTo(node.x, node.y);
-            ctx.lineTo(otherNode.x, otherNode.y);
-            ctx.strokeStyle = `hsla(var(--primary), ${opacity})`;
-            ctx.lineWidth = isConnected ? 3 : 1.5;
-            ctx.stroke();
-
-            if (isConnected) {
-              const midX = (node.x + otherNode.x) / 2;
-              const midY = (node.y + otherNode.y) / 2;
-              ctx.fillStyle = "hsla(var(--primary), 0.9)";
-              ctx.font = "11px monospace";
-              ctx.textAlign = "center";
-              ctx.fillText(sharedTech.join(", "), midX, midY);
+      // Draw inter-project connections (subtle)
+      if (!nodes.some(n => n.expanded)) {
+        nodes.forEach((node, i) => {
+          nodes.forEach((otherNode, j) => {
+            if (i >= j) return;
+            const sharedTech = node.technologies.filter(tech =>
+              otherNode.technologies.includes(tech)
+            );
+            if (sharedTech.length > 0) {
+              ctx.beginPath();
+              ctx.moveTo(node.x, node.y);
+              ctx.lineTo(otherNode.x, otherNode.y);
+              ctx.strokeStyle = `hsla(var(--primary), ${0.1 * sharedTech.length / 5})`;
+              ctx.lineWidth = 1;
+              ctx.stroke();
             }
-          }
+          });
         });
-      });
+      }
 
-      // Draw nodes
+      // Draw neural networks for each project
       nodes.forEach(node => {
-        const isHovered = hoveredNode === node.id;
-        const size = isHovered ? node.radius * 1.4 : node.radius;
-
-        // Draw glow
-        if (isHovered) {
-          const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size + 20);
-          gradient.addColorStop(0, node.color.replace(")", ", 0.8)").replace("hsl", "hsla"));
-          gradient.addColorStop(1, node.color.replace(")", ", 0)").replace("hsl", "hsla"));
-          ctx.fillStyle = gradient;
+        const progress = node.expansionProgress;
+        
+        // Neural network structure
+        const inputLayerSize = 1;
+        const hiddenLayerSize = node.technologies.length;
+        const outputLayerSize = 1;
+        
+        const baseRadius = 20;
+        const nodeRadius = 8;
+        const layerSpacing = 80 * (1 + progress * 1.5);
+        
+        // Input layer (project name)
+        const inputY = node.y;
+        const inputNode = { x: node.x - layerSpacing, y: inputY };
+        
+        // Hidden layer (technologies) - expanded when hovered
+        const hiddenNodes = node.technologies.map((tech, i) => {
+          const angleSpread = progress * Math.PI * 0.6;
+          const angle = (i - (hiddenLayerSize - 1) / 2) * (angleSpread / Math.max(hiddenLayerSize - 1, 1));
+          const spread = progress * 60;
+          return {
+            x: node.x,
+            y: node.y + Math.sin(angle) * spread,
+            tech
+          };
+        });
+        
+        // Output layer
+        const outputNode = { x: node.x + layerSpacing, y: node.y };
+        
+        // Draw connections
+        ctx.strokeStyle = node.color.replace(")", ", 0.3)").replace("hsl", "hsla");
+        ctx.lineWidth = 1.5;
+        
+        // Input to hidden
+        hiddenNodes.forEach(hidden => {
           ctx.beginPath();
-          ctx.arc(node.x, node.y, size + 20, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // Draw node
+          ctx.moveTo(inputNode.x, inputNode.y);
+          ctx.lineTo(hidden.x, hidden.y);
+          ctx.stroke();
+        });
+        
+        // Hidden to output
+        hiddenNodes.forEach(hidden => {
+          ctx.beginPath();
+          ctx.moveTo(hidden.x, hidden.y);
+          ctx.lineTo(outputNode.x, outputNode.y);
+          ctx.stroke();
+        });
+        
+        // Draw input node
         ctx.beginPath();
-        ctx.arc(node.x, node.y, size, 0, Math.PI * 2);
+        ctx.arc(inputNode.x, inputNode.y, nodeRadius, 0, Math.PI * 2);
         ctx.fillStyle = node.color;
-        ctx.shadowBlur = isHovered ? 15 : 5;
+        ctx.shadowBlur = 10;
         ctx.shadowColor = node.color;
         ctx.fill();
         ctx.shadowBlur = 0;
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
-        ctx.lineWidth = isHovered ? 3 : 2;
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+        ctx.lineWidth = 2;
         ctx.stroke();
-
-        // Draw title
+        
+        // Draw hidden layer nodes
+        hiddenNodes.forEach(hidden => {
+          ctx.beginPath();
+          ctx.arc(hidden.x, hidden.y, nodeRadius * (1 + progress * 0.3), 0, Math.PI * 2);
+          ctx.fillStyle = node.color;
+          ctx.shadowBlur = 8 + progress * 6;
+          ctx.shadowColor = node.color;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          
+          // Draw technology label when expanded
+          if (progress > 0.3) {
+            ctx.fillStyle = `rgba(255, 255, 255, ${progress})`;
+            ctx.font = "10px monospace";
+            ctx.textAlign = "right";
+            ctx.textBaseline = "middle";
+            ctx.fillText(hidden.tech, hidden.x - 15, hidden.y);
+          }
+        });
+        
+        // Draw output node
+        ctx.beginPath();
+        ctx.arc(outputNode.x, outputNode.y, nodeRadius, 0, Math.PI * 2);
+        ctx.fillStyle = node.color;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = node.color;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Draw project title at center
         ctx.fillStyle = "white";
-        ctx.font = isHovered ? "bold 13px sans-serif" : "11px sans-serif";
+        ctx.font = progress > 0.5 ? "bold 14px sans-serif" : "12px sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.shadowBlur = 3;
-        ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
+        ctx.shadowColor = "rgba(0, 0, 0, 0.9)";
         const words = node.title.split(" ");
         words.forEach((word, i) => {
-          ctx.fillText(word, node.x, node.y + (i - words.length / 2 + 0.5) * 15);
+          ctx.fillText(word, node.x, node.y + (i - words.length / 2 + 0.5) * 16);
         });
         ctx.shadowBlur = 0;
-
-        if (isHovered) {
-          ctx.font = "10px monospace";
-          ctx.fillStyle = node.color;
-          ctx.fillText(`${node.technologies.length} technologies`, node.x, node.y + size + 25);
-        }
       });
 
       requestAnimationFrame(animate);
