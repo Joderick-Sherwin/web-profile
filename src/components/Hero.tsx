@@ -5,7 +5,6 @@ import { useAI } from "@/contexts/AIContext";
 import NeuralNetwork from "./NeuralNetwork";
 import CircuitPattern from "./CircuitPattern";
 import AIParticles from "./AIParticles";
-import DataStream from "./DataStream";
 import FloatingCode from "./FloatingCode";
 
 const AI_QUOTES = [
@@ -45,7 +44,6 @@ const Hero = () => {
       <NeuralNetwork />
       <CircuitPattern />
       <AIParticles />
-      <DataStream />
       <FloatingCode />
       
       {/* Floating AI icons */}

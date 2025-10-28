@@ -5,6 +5,8 @@ interface Node {
   y: number;
   vx: number;
   vy: number;
+  targetX: number;
+  targetY: number;
 }
 
 const NeuralNetwork = () => {
@@ -26,37 +28,57 @@ const NeuralNetwork = () => {
     window.addEventListener("resize", resizeCanvas);
 
     const nodes: Node[] = [];
-    const nodeCount = 40;
-    const maxDistance = 120;
+    const nodeCount = 50;
+    const maxDistance = 150;
 
-    // Initialize nodes
+    // Initialize nodes with target positions
     for (let i = 0; i < nodeCount; i++) {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
       nodes.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
+        x,
+        y,
+        vx: 0,
+        vy: 0,
+        targetX: x,
+        targetY: y,
       });
     }
 
+    // Change targets periodically for smooth architecture changes
+    const changeTargets = () => {
+      nodes.forEach(node => {
+        node.targetX = Math.random() * canvas.width;
+        node.targetY = Math.random() * canvas.height;
+      });
+    };
+
+    const targetInterval = setInterval(changeTargets, 8000);
+
     const animate = () => {
-      ctx.fillStyle = "rgba(22, 22, 26, 0.1)";
+      ctx.fillStyle = "rgba(22, 22, 26, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Update and draw nodes
+      // Update and draw nodes with smooth transitions
       nodes.forEach((node, i) => {
+        // Smoothly move towards target position
+        const dx = node.targetX - node.x;
+        const dy = node.targetY - node.y;
+        node.vx = dx * 0.005;
+        node.vy = dy * 0.005;
+        
         node.x += node.vx;
         node.y += node.vy;
 
-        // Bounce off edges
-        if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
-        if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
-
-        // Draw node
+        // Draw node with subtle pulsing
+        const pulse = Math.sin(Date.now() * 0.001 + i) * 0.5 + 1.5;
         ctx.beginPath();
-        ctx.arc(node.x, node.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = "hsl(200, 95%, 55%)";
+        ctx.arc(node.x, node.y, pulse, 0, Math.PI * 2);
+        ctx.fillStyle = "hsl(var(--primary))";
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = "hsl(var(--primary))";
         ctx.fill();
+        ctx.shadowBlur = 0;
 
         // Draw connections
         nodes.forEach((otherNode, j) => {
@@ -86,6 +108,7 @@ const NeuralNetwork = () => {
 
     return () => {
       window.removeEventListener("resize", resizeCanvas);
+      clearInterval(targetInterval);
     };
   }, []);
 
