@@ -4,21 +4,17 @@ import Experience from "@/components/Experience";
 import Skills from "@/components/Skills";
 import Projects from "@/components/Projects";
 import Contact from "@/components/Contact";
-import MatrixRain from "@/components/MatrixRain";
 import HolographicOverlay from "@/components/HolographicOverlay";
 import AIAssistantIndicator from "@/components/AIAssistantIndicator";
 import AITransition from "@/components/AITransition";
-import MLDemo from "@/components/MLDemo";
 
 const Index = () => {
   return (
     <div className="min-h-screen relative">
       {/* Global AI effects */}
-      <MatrixRain />
       <HolographicOverlay />
       <AIAssistantIndicator />
       <AITransition />
-      <MLDemo />
       
       <Hero />
       <About />
