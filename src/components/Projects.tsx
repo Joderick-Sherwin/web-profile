@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAI } from "@/contexts/AIContext";
 import { toast } from "sonner";
 import ProjectsNetwork from "./ProjectsNetwork";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const projects = [
   {
@@ -90,6 +91,7 @@ const Projects = () => {
   const [isVisible, setIsVisible] = useState(false);
   const { isAIActive } = useAI();
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const isMobile = useIsMobile();
 
   const speakProjectDetails = (project: typeof projects[0]) => {
     if (!isAIActive) return;
@@ -166,9 +168,9 @@ const Projects = () => {
               <div
                 key={index}
                 onClick={() => speakProjectDetails(project)}
-                className={`card-glass ai-border rounded-2xl p-6 sm:p-8 shadow-card hover:shadow-glow transition-all duration-500 group hover:scale-[1.05] flex flex-col relative overflow-hidden ${
+                className={`card-glass ai-border rounded-2xl p-6 sm:p-8 shadow-card transition-all duration-500 group flex flex-col relative overflow-hidden ${
                   isVisible ? "animate-scale-in" : "opacity-0"
-                } ${isAIActive ? "cursor-pointer" : ""}`}
+                } ${isAIActive ? "cursor-pointer" : ""} ${!isMobile ? "hover:shadow-glow hover:scale-[1.05]" : ""}`}
                 style={{ animationDelay: `${0.2 + index * 0.15}s` }}
               >
                 {/* AI sparkle indicator */}

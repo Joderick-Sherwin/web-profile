@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Sparkles } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ProjectNode {
   id: number;
@@ -29,6 +30,8 @@ const ProjectsNetwork = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const isMobile = useIsMobile();
+  const animationFrameRef = useRef<number>();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -89,11 +92,20 @@ const ProjectsNetwork = () => {
 
     canvas.addEventListener("mousemove", handleMouseMove);
 
-    const animate = () => {
+    let lastTime = 0;
+    const frameDelay = isMobile ? 1000 / 30 : 1000 / 60; // 30fps on mobile, 60fps on desktop
+
+    const animate = (currentTime: number) => {
+      if (currentTime - lastTime < frameDelay) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
+      lastTime = currentTime;
+
       ctx.fillStyle = "rgba(22, 22, 26, 0.15)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Apply forces to nodes
+      // Apply forces to nodes (simplified on mobile)
       nodes.forEach((node, i) => {
         // Smooth expansion animation
         if (node.targetExpanded && node.expansionProgress < 1) {
@@ -104,51 +116,53 @@ const ProjectsNetwork = () => {
           node.expanded = node.expansionProgress > 0.5;
         }
 
-        // Mouse repulsion force
-        const dx = node.x - mousePos.x;
-        const dy = node.y - mousePos.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        if (distance < 150 && distance > 0) {
-          const force = (150 - distance) / 150;
-          node.vx += (dx / distance) * force * 0.5;
-          node.vy += (dy / distance) * force * 0.5;
-        }
-
-        // Node-to-node repulsion
-        nodes.forEach((otherNode, j) => {
-          if (i === j) return;
-          const dx = node.x - otherNode.x;
-          const dy = node.y - otherNode.y;
+        if (!isMobile) {
+          // Mouse repulsion force (desktop only)
+          const dx = node.x - mousePos.x;
+          const dy = node.y - mousePos.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
           
-          if (distance < 100 && distance > 0) {
-            const force = (100 - distance) / 1000;
-            node.vx += (dx / distance) * force;
-            node.vy += (dy / distance) * force;
+          if (distance < 150 && distance > 0) {
+            const force = (150 - distance) / 150;
+            node.vx += (dx / distance) * force * 0.5;
+            node.vy += (dy / distance) * force * 0.5;
           }
-        });
 
-        // Spring force to center
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-        const toCenterX = centerX - node.x;
-        const toCenterY = centerY - node.y;
-        node.vx += toCenterX * 0.0002;
-        node.vy += toCenterY * 0.0002;
+          // Node-to-node repulsion (desktop only)
+          nodes.forEach((otherNode, j) => {
+            if (i === j) return;
+            const dx = node.x - otherNode.x;
+            const dy = node.y - otherNode.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < 100 && distance > 0) {
+              const force = (100 - distance) / 1000;
+              node.vx += (dx / distance) * force;
+              node.vy += (dy / distance) * force;
+            }
+          });
 
-        // Apply velocity with damping
-        node.vx *= 0.95;
-        node.vy *= 0.95;
-        node.x += node.vx;
-        node.y += node.vy;
+          // Spring force to center
+          const centerX = canvas.width / 2;
+          const centerY = canvas.height / 2;
+          const toCenterX = centerX - node.x;
+          const toCenterY = centerY - node.y;
+          node.vx += toCenterX * 0.0002;
+          node.vy += toCenterY * 0.0002;
 
-        // Keep nodes within bounds
-        const padding = 60;
-        if (node.x < padding) { node.x = padding; node.vx *= -0.5; }
-        if (node.x > canvas.width - padding) { node.x = canvas.width - padding; node.vx *= -0.5; }
-        if (node.y < padding) { node.y = padding; node.vy *= -0.5; }
-        if (node.y > canvas.height - padding) { node.y = canvas.height - padding; node.vy *= -0.5; }
+          // Apply velocity with damping
+          node.vx *= 0.95;
+          node.vy *= 0.95;
+          node.x += node.vx;
+          node.y += node.vy;
+
+          // Keep nodes within bounds
+          const padding = 60;
+          if (node.x < padding) { node.x = padding; node.vx *= -0.5; }
+          if (node.x > canvas.width - padding) { node.x = canvas.width - padding; node.vx *= -0.5; }
+          if (node.y < padding) { node.y = padding; node.vy *= -0.5; }
+          if (node.y > canvas.height - padding) { node.y = canvas.height - padding; node.vy *= -0.5; }
+        }
       });
 
       // Draw inter-project connections (subtle)
@@ -284,19 +298,22 @@ const ProjectsNetwork = () => {
         ctx.shadowBlur = 0;
       });
 
-      requestAnimationFrame(animate);
+      animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
+    animationFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener("resize", resizeCanvas);
       canvas.removeEventListener("mousemove", handleMouseMove);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
     };
-  }, [hoveredNode, mousePos.x, mousePos.y]);
+  }, [hoveredNode, mousePos.x, mousePos.y, isMobile]);
 
   return (
-    <div className="relative w-full h-[600px] card-glass ai-border rounded-2xl overflow-hidden">
+    <div className={`relative w-full ${isMobile ? 'h-[400px]' : 'h-[600px]'} card-glass ai-border rounded-2xl overflow-hidden`}>
       <div className="absolute top-4 left-4 z-10 flex items-center gap-2 text-primary">
         <Sparkles className="w-5 h-5 animate-pulse" />
         <span className="text-sm font-semibold">Project Network Graph</span>
@@ -306,7 +323,7 @@ const ProjectsNetwork = () => {
         className="w-full h-full"
       />
       <div className="absolute bottom-4 left-4 text-xs text-muted-foreground">
-        Nodes connected by shared technologies • Hover to explore
+        {isMobile ? 'Tap to explore' : 'Nodes connected by shared technologies • Hover to explore'}
       </div>
     </div>
   );
