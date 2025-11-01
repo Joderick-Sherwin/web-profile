@@ -32,8 +32,30 @@ const ProjectsNetwork = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const isMobile = useIsMobile();
   const animationFrameRef = useRef<number>();
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Intersection Observer for lazy loading
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
+    if (!isVisible) return; // Don't start animation until visible
+    
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -93,7 +115,7 @@ const ProjectsNetwork = () => {
     canvas.addEventListener("mousemove", handleMouseMove);
 
     let lastTime = 0;
-    const frameDelay = isMobile ? 1000 / 30 : 1000 / 60; // 30fps on mobile, 60fps on desktop
+    const frameDelay = isMobile ? 1000 / 20 : 1000 / 60; // 20fps on mobile, 60fps on desktop
 
     const animate = (currentTime: number) => {
       if (currentTime - lastTime < frameDelay) {
@@ -165,8 +187,8 @@ const ProjectsNetwork = () => {
         }
       });
 
-      // Draw inter-project connections (subtle)
-      if (!nodes.some(n => n.expanded)) {
+      // Draw inter-project connections (skip on mobile for performance)
+      if (!isMobile && !nodes.some(n => n.expanded)) {
         nodes.forEach((node, i) => {
           nodes.forEach((otherNode, j) => {
             if (i >= j) return;
@@ -310,10 +332,18 @@ const ProjectsNetwork = () => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [hoveredNode, mousePos.x, mousePos.y, isMobile]);
+  }, [hoveredNode, mousePos.x, mousePos.y, isMobile, isVisible]);
 
   return (
-    <div className={`relative w-full ${isMobile ? 'h-[400px]' : 'h-[600px]'} card-glass ai-border rounded-2xl overflow-hidden`}>
+    <div 
+      ref={containerRef}
+      className={`relative w-full ${isMobile ? 'h-[400px]' : 'h-[600px]'} card-glass ai-border rounded-2xl overflow-hidden`}
+    >
+      {!isVisible && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-muted-foreground">Loading network graph...</div>
+        </div>
+      )}
       <div className="absolute top-4 left-4 z-10 flex items-center gap-2 text-primary">
         <Sparkles className="w-5 h-5 animate-pulse" />
         <span className="text-sm font-semibold">Project Network Graph</span>
@@ -321,6 +351,7 @@ const ProjectsNetwork = () => {
       <canvas
         ref={canvasRef}
         className="w-full h-full"
+        style={{ opacity: isVisible ? 1 : 0 }}
       />
       <div className="absolute bottom-4 left-4 text-xs text-muted-foreground">
         {isMobile ? 'Tap to explore' : 'Nodes connected by shared technologies • Hover to explore'}
