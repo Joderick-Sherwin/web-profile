@@ -8,10 +8,21 @@ import HolographicOverlay from "@/components/HolographicOverlay";
 import AIAssistantIndicator from "@/components/AIAssistantIndicator";
 import AITransition from "@/components/AITransition";
 import AIChat from "@/components/AIChat";
+import NeuralNetwork from "@/components/NeuralNetwork";
+import CircuitPattern from "@/components/CircuitPattern";
+import AIParticles from "@/components/AIParticles";
+import FloatingCode from "@/components/FloatingCode";
 
 const Index = () => {
   return (
     <div className="min-h-screen relative">
+      {/* Global background effects */}
+      <div className="fixed inset-0 bg-gradient-to-br from-[hsl(var(--hero-gradient-start))] via-background to-[hsl(var(--hero-gradient-end))]" />
+      <NeuralNetwork />
+      <CircuitPattern />
+      <AIParticles />
+      <FloatingCode />
+      
       {/* Global AI effects */}
       <HolographicOverlay />
       <AIAssistantIndicator />

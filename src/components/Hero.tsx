@@ -2,10 +2,6 @@ import { ArrowDown, Github, Linkedin, Mail, Brain, Code, Cpu } from "lucide-reac
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useAI } from "@/contexts/AIContext";
-import NeuralNetwork from "./NeuralNetwork";
-import CircuitPattern from "./CircuitPattern";
-import AIParticles from "./AIParticles";
-import FloatingCode from "./FloatingCode";
 
 const AI_QUOTES = [
   "The question of whether a computer can think is no more interesting than the question of whether a submarine can swim. - Edsger Dijkstra",
@@ -37,15 +33,6 @@ const Hero = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Animated gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--hero-gradient-start))] via-background to-[hsl(var(--hero-gradient-end))]" />
-      
-      {/* AI-themed background elements */}
-      <NeuralNetwork />
-      <CircuitPattern />
-      <AIParticles />
-      <FloatingCode />
-      
       {/* Floating AI icons */}
       <div className="absolute inset-0 opacity-10">
         <Brain className="absolute top-1/4 left-1/4 w-16 h-16 text-primary animate-float" />
