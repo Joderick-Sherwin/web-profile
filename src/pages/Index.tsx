@@ -7,6 +7,7 @@ import Contact from "@/components/Contact";
 import HolographicOverlay from "@/components/HolographicOverlay";
 import AIAssistantIndicator from "@/components/AIAssistantIndicator";
 import AITransition from "@/components/AITransition";
+import AIChat from "@/components/AIChat";
 
 const Index = () => {
   return (
@@ -15,6 +16,7 @@ const Index = () => {
       <HolographicOverlay />
       <AIAssistantIndicator />
       <AITransition />
+      <AIChat />
       
       <Hero />
       <About />
