@@ -34,22 +34,22 @@ const projects = [
     description: "Developed a real-time facial tracking system using computer vision to replicate user expressions on 3D animated characters.",
     readOutDetails: "The Animoji Simulation Project is a real-time facial tracking system I built using computer vision. It captures user expressions and replicates them on 3D animated characters instantly. Using OpenCV and MediaPipe, it tracks facial movements with high precision, enabling interactive personalized animations. This technology has applications in messaging platforms, gaming, and virtual communication.",
     highlights: [
-      "Real-time facial expression tracking",
-      "Interactive personalized animations",
-      "Applications in messaging and gaming"
+      "RReal-time 3D wireframe rendering",
+      "Preserves anonymity and identity",
+      "Useful in legal and security applications"
     ],
     technologies: ["Python", "OpenCV", "MediaPipe"]
   },
   {
     title: "Project WraithCast",
-    description: "A real-time wireframe camera system designed to capture and render 3D skeletal representations of environments and objects.",
-    readOutDetails: "Project WraithCast is a cutting-edge real-time wireframe camera system I designed. It captures and renders 3D skeletal representations of environments and objects using high-speed imaging with depth-sensing technology. The system is optimized for rapid rendering and streaming, making it ideal for terrain analysis, augmented reality simulations, and tactical applications where understanding spatial structure is critical.",
+    description: "A real-time wireframe camera system that captures 3D skeletal and facial expressions while preserving user anonymity.",
+    readOutDetails: "Project WraithCast is a real-time wireframe camera system that captures and renders skeletal 3D structures and facial expressions while maintaining anonymity. It combines depth sensing and expression tracking to visualize human motion and emotion without revealing identity. This makes it ideal for use in criminal case proceedings, witness protection, and privacy-preserving surveillance or analysis.",
     highlights: [
       "High-speed imaging with depth-sensing technology",
       "Optimized for rapid rendering and streaming",
       "Ideal for terrain analysis and AR simulations"
     ],
-    technologies: ["Python", "Computer Vision", "3D Rendering", "Real-time Processing"]
+    technologies: ["Python", "Computer Vision", "MediaPipe", "Real-time Processing"]
   },
   {
     title: "RAG Project",
