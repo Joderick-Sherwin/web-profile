@@ -133,20 +133,26 @@ const Projects = () => {
   };
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
+    let observer: IntersectionObserver | undefined;
+    if (typeof window !== 'undefined' && 'IntersectionObserver' in window) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+          }
+        },
+        { threshold: 0.2 }
+      );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+      if (sectionRef.current) {
+        observer.observe(sectionRef.current);
+      }
+    } else {
+      // Fallback for older mobile browsers
+      setIsVisible(true);
     }
 
-    return () => observer.disconnect();
+    return () => observer?.disconnect();
   }, []);
 
   return (

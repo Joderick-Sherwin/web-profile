@@ -37,20 +37,26 @@ const ProjectsNetwork = () => {
 
   // Intersection Observer for lazy loading
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
+    let observer: IntersectionObserver | undefined;
+    if (typeof window !== 'undefined' && 'IntersectionObserver' in window) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+          }
+        },
+        { threshold: 0.1 }
+      );
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
+      if (containerRef.current) {
+        observer.observe(containerRef.current);
+      }
+    } else {
+      // Fallback for older mobile browsers
+      setIsVisible(true);
     }
 
-    return () => observer.disconnect();
+    return () => observer?.disconnect();
   }, []);
 
   useEffect(() => {
