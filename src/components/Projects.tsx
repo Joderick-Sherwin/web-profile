@@ -133,26 +133,12 @@ const Projects = () => {
   };
 
   useEffect(() => {
-    let observer: IntersectionObserver | undefined;
-    if (typeof window !== 'undefined' && 'IntersectionObserver' in window) {
-      observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-          }
-        },
-        { threshold: 0.2 }
-      );
-
-      if (sectionRef.current) {
-        observer.observe(sectionRef.current);
-      }
-    } else {
-      // Fallback for older mobile browsers
+    // Simple timeout fallback for Safari/older browsers
+    const timer = setTimeout(() => {
       setIsVisible(true);
-    }
+    }, 100);
 
-    return () => observer?.disconnect();
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -164,10 +150,12 @@ const Projects = () => {
           </h2>
         </div>
 
-        {/* Network Graph Visualization */}
-        <div className={`mb-16 transition-all duration-700 ${isVisible ? "animate-fade-in" : "opacity-0"}`} style={{ animationDelay: "0.3s" }}>
-          <ProjectsNetwork />
-        </div>
+        {/* Network Graph Visualization - Desktop Only */}
+        {!isMobile && (
+          <div className={`mb-16 transition-all duration-700 ${isVisible ? "animate-fade-in" : "opacity-0"}`} style={{ animationDelay: "0.3s" }}>
+            <ProjectsNetwork />
+          </div>
+        )}
 
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {projects.map((project, index) => (
