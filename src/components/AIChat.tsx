@@ -126,8 +126,9 @@ const AIChat = () => {
       {!isOpen && (
         <Button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-8 left-8 z-50 rounded-full w-16 h-16 shadow-glow animate-fade-in animate-float"
+          className="fixed bottom-8 left-8 z-[9999] rounded-full w-16 h-16 shadow-glow animate-fade-in animate-float"
           size="icon"
+          style={{ position: 'fixed' }}
         >
           <MessageSquare className="w-6 h-6" />
           <Sparkles className="w-3 h-3 absolute -top-1 -right-1 animate-pulse" />
@@ -136,7 +137,7 @@ const AIChat = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-8 left-8 z-50 w-96 h-[600px] card-glass ai-border rounded-2xl shadow-glow animate-scale-in flex flex-col overflow-hidden">
+        <div className="fixed bottom-8 left-8 z-[9999] w-96 h-[600px] card-glass ai-border rounded-2xl shadow-glow animate-scale-in flex flex-col overflow-hidden" style={{ position: 'fixed' }}>
           {/* Header */}
           <div className="p-4 border-b border-border/50 flex items-center justify-between bg-primary/5">
             <div className="flex items-center gap-2">
