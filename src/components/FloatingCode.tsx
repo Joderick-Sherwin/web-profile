@@ -51,8 +51,8 @@ const FloatingCode = () => {
       text: codeSnippets[Math.floor(Math.random() * codeSnippets.length)],
       x: Math.random() * 100,
       y: -10,
-      speed: 0.2 + Math.random() * 0.3,
-      opacity: 0.3 + Math.random() * 0.4,
+      speed: 0.05 + Math.random() * 0.1,
+      opacity: 0.2 + Math.random() * 0.3,
     });
 
     const initialLines = Array.from({ length: 8 }, createCodeLine);
@@ -67,13 +67,13 @@ const FloatingCode = () => {
           }))
           .filter((line) => line.y < 110);
 
-        if (updated.length < 8 && Math.random() > 0.7) {
+        if (updated.length < 8 && Math.random() > 0.8) {
           updated.push(createCodeLine());
         }
 
         return updated;
       });
-    }, 50);
+    }, 100);
 
     return () => clearInterval(interval);
   }, []);
