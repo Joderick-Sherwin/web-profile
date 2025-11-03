@@ -12,6 +12,7 @@ import NeuralNetwork from "@/components/NeuralNetwork";
 import CircuitPattern from "@/components/CircuitPattern";
 import AIParticles from "@/components/AIParticles";
 import FloatingCode from "@/components/FloatingCode";
+import WelcomeDialog from "@/components/WelcomeDialog";
 
 const Index = () => {
   return (
@@ -28,6 +29,7 @@ const Index = () => {
       <AIAssistantIndicator />
       <AITransition />
       <AIChat />
+      <WelcomeDialog />
       
       <Hero />
       <About />
