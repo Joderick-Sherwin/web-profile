@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CodeLine {
   id: number;
@@ -9,8 +10,9 @@ interface CodeLine {
   opacity: number;
 }
 
-const FloatingCode = () => {
+const FloatingCode = memo(() => {
   const [codeLines, setCodeLines] = useState<CodeLine[]>([]);
+  const isMobile = useIsMobile();
 
   const codeSnippets = [
     "from keras.models import Sequential",
@@ -55,7 +57,8 @@ const FloatingCode = () => {
       opacity: 0.2 + Math.random() * 0.3,
     });
 
-    const initialLines = Array.from({ length: 8 }, createCodeLine);
+    const maxLines = isMobile ? 4 : 8;
+    const initialLines = Array.from({ length: maxLines }, createCodeLine);
     setCodeLines(initialLines);
 
     const interval = setInterval(() => {
@@ -67,13 +70,13 @@ const FloatingCode = () => {
           }))
           .filter((line) => line.y < 110);
 
-        if (updated.length < 8 && Math.random() > 0.8) {
+        if (updated.length < maxLines && Math.random() > 0.8) {
           updated.push(createCodeLine());
         }
 
         return updated;
       });
-    }, 100);
+    }, isMobile ? 150 : 100); // Slower on mobile
 
     return () => clearInterval(interval);
   }, []);
@@ -96,6 +99,8 @@ const FloatingCode = () => {
       ))}
     </div>
   );
-};
+});
+
+FloatingCode.displayName = "FloatingCode";
 
 export default FloatingCode;

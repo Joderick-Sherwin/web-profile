@@ -1,4 +1,6 @@
-const CircuitPattern = () => {
+import { memo } from "react";
+
+const CircuitPattern = memo(() => {
   return (
     <div className="absolute inset-0 overflow-hidden opacity-10">
       <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -29,6 +31,8 @@ const CircuitPattern = () => {
       </svg>
     </div>
   );
-};
+});
+
+CircuitPattern.displayName = "CircuitPattern";
 
 export default CircuitPattern;

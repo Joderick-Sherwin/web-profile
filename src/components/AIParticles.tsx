@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, memo, useCallback } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Particle {
   x: number;
@@ -11,8 +12,9 @@ interface Particle {
   trail: Array<{ x: number; y: number; opacity: number }>;
 }
 
-const AIParticles = () => {
+const AIParticles = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -30,7 +32,7 @@ const AIParticles = () => {
     window.addEventListener("resize", resizeCanvas);
 
     const particles: Particle[] = [];
-    const particleCount = 80;
+    const particleCount = isMobile ? 30 : 80; // Reduce on mobile
     const colors = [
       "hsl(200, 95%, 55%)",  // primary
       "hsl(270, 60%, 60%)",  // secondary
@@ -53,23 +55,35 @@ const AIParticles = () => {
 
     let mouseX = 0;
     let mouseY = 0;
+    let mouseMoveTimeout: number;
 
+    // Throttle mouse events on mobile
     const handleMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
+      if (isMobile) {
+        if (mouseMoveTimeout) return;
+        mouseMoveTimeout = window.setTimeout(() => {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+          mouseMoveTimeout = 0;
+        }, 50);
+      } else {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      }
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       particles.forEach((particle) => {
-        // Add current position to trail
+        // Add current position to trail (shorter on mobile)
         particle.trail.push({ x: particle.x, y: particle.y, opacity: 0.8 });
         
         // Limit trail length
-        if (particle.trail.length > 10) {
+        const maxTrailLength = isMobile ? 5 : 10;
+        if (particle.trail.length > maxTrailLength) {
           particle.trail.shift();
         }
 
@@ -98,7 +112,7 @@ const AIParticles = () => {
           particle.y = Math.max(0, Math.min(canvas.height, particle.y));
         }
 
-        // Draw trail with glowing effect
+        // Draw trail with glowing effect (reduced on mobile)
         particle.trail.forEach((point, index) => {
           const trailOpacity = (index / particle.trail.length) * 0.5;
           const trailSize = particle.size * (index / particle.trail.length);
@@ -106,8 +120,10 @@ const AIParticles = () => {
           ctx.beginPath();
           ctx.arc(point.x, point.y, trailSize, 0, Math.PI * 2);
           ctx.fillStyle = particle.color.replace(")", `, ${trailOpacity})`).replace("hsl", "hsla");
-          ctx.shadowBlur = 15;
-          ctx.shadowColor = particle.color;
+          if (!isMobile) {
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = particle.color;
+          }
           ctx.fill();
         });
 
@@ -115,8 +131,10 @@ const AIParticles = () => {
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fillStyle = particle.color.replace(")", `, ${particle.opacity})`).replace("hsl", "hsla");
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = particle.color;
+        if (!isMobile) {
+          ctx.shadowBlur = 20;
+          ctx.shadowColor = particle.color;
+        }
         ctx.fill();
         ctx.shadowBlur = 0;
 
@@ -145,6 +163,8 @@ const AIParticles = () => {
       style={{ mixBlendMode: "screen" }}
     />
   );
-};
+});
+
+AIParticles.displayName = "AIParticles";
 
 export default AIParticles;

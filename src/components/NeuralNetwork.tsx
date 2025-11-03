@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, memo } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Node {
   x: number;
@@ -9,8 +10,9 @@ interface Node {
   targetY: number;
 }
 
-const NeuralNetwork = () => {
+const NeuralNetwork = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -28,8 +30,8 @@ const NeuralNetwork = () => {
     window.addEventListener("resize", resizeCanvas);
 
     const nodes: Node[] = [];
-    const nodeCount = 50;
-    const maxDistance = 150;
+    const nodeCount = isMobile ? 20 : 50; // Reduce on mobile
+    const maxDistance = isMobile ? 100 : 150;
 
     // Initialize nodes with target positions
     for (let i = 0; i < nodeCount; i++) {
@@ -70,13 +72,15 @@ const NeuralNetwork = () => {
         node.x += node.vx;
         node.y += node.vy;
 
-        // Draw node with subtle pulsing
+        // Draw node with subtle pulsing (reduced effects on mobile)
         const pulse = Math.sin(Date.now() * 0.001 + i) * 0.5 + 1.5;
         ctx.beginPath();
         ctx.arc(node.x, node.y, pulse, 0, Math.PI * 2);
         ctx.fillStyle = "hsl(var(--primary))";
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = "hsl(var(--primary))";
+        if (!isMobile) {
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = "hsl(var(--primary))";
+        }
         ctx.fill();
         ctx.shadowBlur = 0;
 
@@ -119,6 +123,8 @@ const NeuralNetwork = () => {
       style={{ mixBlendMode: "screen" }}
     />
   );
-};
+});
+
+NeuralNetwork.displayName = "NeuralNetwork";
 
 export default NeuralNetwork;
