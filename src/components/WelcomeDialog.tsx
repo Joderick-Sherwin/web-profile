@@ -62,9 +62,9 @@ const WelcomeDialog = () => {
               <div className="flex items-start gap-3">
                 <Sparkles className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold text-foreground">Explore Projects</p>
+                  <p className="font-semibold text-foreground">Interactive Projects</p>
                   <p className="text-sm text-muted-foreground">
-                    Scroll through to discover my work in AI, computer vision, and full-stack development.
+                    When AI is engaged, tap on any project card to hear an AI-powered read out with detailed information about the project.
                   </p>
                 </div>
               </div>
