@@ -61,37 +61,47 @@ const FloatingCode = memo(() => {
     const initialLines = Array.from({ length: maxLines }, createCodeLine);
     setCodeLines(initialLines);
 
-    const interval = setInterval(() => {
-      setCodeLines((prev) => {
-        const updated = prev
-          .map((line) => ({
-            ...line,
-            y: line.y + line.speed,
-          }))
-          .filter((line) => line.y < 110);
+    let animationId: number;
+    let lastTime = 0;
+    const updateInterval = isMobile ? 150 : 100;
 
-        if (updated.length < maxLines && Math.random() > 0.8) {
-          updated.push(createCodeLine());
-        }
+    const animate = (currentTime: number) => {
+      if (currentTime - lastTime >= updateInterval) {
+        setCodeLines((prev) => {
+          const updated = prev
+            .map((line) => ({
+              ...line,
+              y: line.y + line.speed,
+            }))
+            .filter((line) => line.y < 110);
 
-        return updated;
-      });
-    }, isMobile ? 150 : 100); // Slower on mobile
+          if (updated.length < maxLines && Math.random() > 0.8) {
+            updated.push(createCodeLine());
+          }
 
-    return () => clearInterval(interval);
-  }, []);
+          return updated;
+        });
+        lastTime = currentTime;
+      }
+      animationId = requestAnimationFrame(animate);
+    };
+
+    animationId = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationId);
+  }, [isMobile]);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {codeLines.map((line) => (
         <div
           key={line.id}
-          className="absolute font-mono text-xs text-primary"
+          className="absolute font-mono text-xs text-primary will-change-transform"
           style={{
             left: `${line.x}%`,
             top: `${line.y}%`,
             opacity: line.opacity,
-            transform: "translateX(-50%)",
+            transform: "translateX(-50%) translateZ(0)",
           }}
         >
           {line.text}
