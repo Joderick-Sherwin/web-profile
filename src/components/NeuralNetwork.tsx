@@ -83,6 +83,10 @@ const NeuralNetwork = memo(() => {
         vy: number;
         targetX: number;
         targetY: number;
+        size: number;
+        targetSize: number;
+        pulsePhase: number;
+        connections: number[];
       }
 
       const nodes: Node[] = [];
@@ -92,17 +96,29 @@ const NeuralNetwork = memo(() => {
       for (let i = 0; i < nodeCount; i++) {
         const x = Math.random() * canvas.width;
         const y = Math.random() * canvas.height;
-        nodes.push({ x, y, vx: 0, vy: 0, targetX: x, targetY: y });
+        nodes.push({ 
+          x, 
+          y, 
+          vx: 0, 
+          vy: 0, 
+          targetX: x, 
+          targetY: y,
+          size: 1 + Math.random() * 2,
+          targetSize: 1 + Math.random() * 3,
+          pulsePhase: Math.random() * Math.PI * 2,
+          connections: [],
+        });
       }
 
       const changeTargets = () => {
         nodes.forEach(node => {
           node.targetX = Math.random() * canvas.width;
           node.targetY = Math.random() * canvas.height;
+          node.targetSize = 1 + Math.random() * 3;
         });
       };
 
-      const targetInterval = setInterval(changeTargets, 8000);
+      const targetInterval = setInterval(changeTargets, 6000);
 
       let lastTime = 0;
       const fps = 60;
@@ -112,10 +128,13 @@ const NeuralNetwork = memo(() => {
         const deltaTime = currentTime - lastTime;
         
         if (deltaTime >= frameDelay) {
-          ctx.fillStyle = "rgba(22, 22, 26, 0.05)";
+          ctx.fillStyle = "rgba(22, 22, 26, 0.08)";
           ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+          const time = currentTime * 0.001;
+
           nodes.forEach((node, i) => {
+            // Movement
             const dx = node.targetX - node.x;
             const dy = node.targetY - node.y;
             node.vx = dx * 0.005;
@@ -124,13 +143,18 @@ const NeuralNetwork = memo(() => {
             node.x += node.vx;
             node.y += node.vy;
 
-            const pulse = Math.sin(currentTime * 0.001 + i) * 0.5 + 1.5;
-            ctx.beginPath();
-            ctx.arc(node.x, node.y, pulse, 0, Math.PI * 2);
-            ctx.fillStyle = "rgba(79, 209, 255, 1)";
-            ctx.fill();
+            // Dynamic size animation
+            const sizeDiff = node.targetSize - node.size;
+            node.size += sizeDiff * 0.02;
 
-            // Optimized: only check forward connections
+            // Pulsing effect
+            node.pulsePhase += 0.02;
+            const pulse = Math.sin(node.pulsePhase) * 0.5 + 1;
+            const breathe = Math.sin(time * 0.5 + i) * 0.3 + 1;
+            const finalSize = node.size * pulse * breathe;
+
+            // Update connections
+            node.connections = [];
             for (let j = i + 1; j < nodes.length; j++) {
               const otherNode = nodes[j];
               const dx = node.x - otherNode.x;
@@ -138,17 +162,59 @@ const NeuralNetwork = memo(() => {
               const distanceSq = dx * dx + dy * dy;
 
               if (distanceSq < maxDistance * maxDistance) {
-                const distance = Math.sqrt(distanceSq);
-                const opacity = (1 - distance / maxDistance) * 0.3;
-                
-                ctx.beginPath();
-                ctx.moveTo(node.x, node.y);
-                ctx.lineTo(otherNode.x, otherNode.y);
-                ctx.strokeStyle = `rgba(79, 209, 255, ${opacity})`;
-                ctx.lineWidth = 1;
-                ctx.stroke();
+                node.connections.push(j);
               }
             }
+
+            // Draw connections
+            node.connections.forEach(j => {
+              const otherNode = nodes[j];
+              const dx = node.x - otherNode.x;
+              const dy = node.y - otherNode.y;
+              const distance = Math.sqrt(dx * dx + dy * dy);
+              
+              const baseOpacity = (1 - distance / maxDistance) * 0.4;
+              const sizeInfluence = (node.size + otherNode.size) / 6;
+              const opacity = baseOpacity * sizeInfluence;
+              const lineWidth = 0.5 + opacity * 2;
+              
+              ctx.beginPath();
+              ctx.moveTo(node.x, node.y);
+              ctx.lineTo(otherNode.x, otherNode.y);
+              
+              const gradient = ctx.createLinearGradient(node.x, node.y, otherNode.x, otherNode.y);
+              gradient.addColorStop(0, `rgba(79, 209, 255, ${opacity})`);
+              gradient.addColorStop(0.5, `rgba(100, 220, 255, ${opacity * 1.2})`);
+              gradient.addColorStop(1, `rgba(79, 209, 255, ${opacity})`);
+              
+              ctx.strokeStyle = gradient;
+              ctx.lineWidth = lineWidth;
+              ctx.stroke();
+            });
+
+            // Draw node with glow
+            const glowSize = finalSize * 2.5;
+            const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, glowSize);
+            gradient.addColorStop(0, "rgba(79, 209, 255, 0.8)");
+            gradient.addColorStop(0.5, "rgba(79, 209, 255, 0.4)");
+            gradient.addColorStop(1, "rgba(79, 209, 255, 0)");
+            
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, glowSize, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Core node
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, finalSize, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(79, 209, 255, 1)";
+            ctx.fill();
+            
+            // Inner highlight
+            ctx.beginPath();
+            ctx.arc(node.x - finalSize * 0.3, node.y - finalSize * 0.3, finalSize * 0.4, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(150, 230, 255, 0.6)";
+            ctx.fill();
           });
 
           lastTime = currentTime;

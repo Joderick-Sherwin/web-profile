@@ -5,6 +5,10 @@ interface Node {
   vy: number;
   targetX: number;
   targetY: number;
+  size: number;
+  targetSize: number;
+  pulsePhase: number;
+  connections: number[];
 }
 
 interface WorkerMessage {
@@ -31,7 +35,7 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
     nodeCount = isMobile ? 20 : 50;
     maxDistance = isMobile ? 100 : 150;
 
-    // Initialize nodes
+    // Initialize nodes with dynamic properties
     nodes = [];
     for (let i = 0; i < nodeCount; i++) {
       const x = Math.random() * width;
@@ -43,24 +47,32 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
         vy: 0,
         targetX: x,
         targetY: y,
+        size: 1 + Math.random() * 2,
+        targetSize: 1 + Math.random() * 3,
+        pulsePhase: Math.random() * Math.PI * 2,
+        connections: [],
       });
     }
 
-    // Change targets periodically
+    // Dynamic behavior changes
     setInterval(() => {
       nodes.forEach(node => {
         node.targetX = Math.random() * width;
         node.targetY = Math.random() * height;
+        node.targetSize = 1 + Math.random() * 3;
       });
-    }, 8000);
+    }, 6000);
   }
 
   if (type === 'animate' && ctx && canvas) {
-    ctx.fillStyle = "rgba(22, 22, 26, 0.05)";
+    ctx.fillStyle = "rgba(22, 22, 26, 0.08)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Update and draw nodes
+    const time = (timestamp || 0) * 0.001;
+
+    // Update and draw nodes with dynamic sizing
     nodes.forEach((node, i) => {
+      // Movement
       const dx = node.targetX - node.x;
       const dy = node.targetY - node.y;
       node.vx = dx * 0.005;
@@ -69,13 +81,18 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
       node.x += node.vx;
       node.y += node.vy;
 
-      const pulse = Math.sin((timestamp || 0) * 0.001 + i) * 0.5 + 1.5;
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, pulse, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(79, 209, 255, 1)";
-      ctx.fill();
+      // Dynamic size animation (grow/shrink)
+      const sizeDiff = node.targetSize - node.size;
+      node.size += sizeDiff * 0.02;
 
-      // Draw connections (optimized: only check forward to avoid duplicates)
+      // Pulsing effect
+      node.pulsePhase += 0.02;
+      const pulse = Math.sin(node.pulsePhase) * 0.5 + 1;
+      const breathe = Math.sin(time * 0.5 + i) * 0.3 + 1;
+      const finalSize = node.size * pulse * breathe;
+
+      // Update connections dynamically
+      node.connections = [];
       for (let j = i + 1; j < nodes.length; j++) {
         const otherNode = nodes[j];
         const dx = node.x - otherNode.x;
@@ -84,17 +101,63 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
         const maxDistanceSq = maxDistance * maxDistance;
 
         if (distanceSq < maxDistanceSq) {
-          const distance = Math.sqrt(distanceSq);
-          const opacity = (1 - distance / maxDistance) * 0.3;
-          
-          ctx.beginPath();
-          ctx.moveTo(node.x, node.y);
-          ctx.lineTo(otherNode.x, otherNode.y);
-          ctx.strokeStyle = `rgba(79, 209, 255, ${opacity})`;
-          ctx.lineWidth = 1;
-          ctx.stroke();
+          node.connections.push(j);
         }
       }
+
+      // Draw connections with dynamic opacity
+      node.connections.forEach(j => {
+        const otherNode = nodes[j];
+        const dx = node.x - otherNode.x;
+        const dy = node.y - otherNode.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        // Connection strength based on distance and node sizes
+        const baseOpacity = (1 - distance / maxDistance) * 0.4;
+        const sizeInfluence = (node.size + otherNode.size) / 6;
+        const opacity = baseOpacity * sizeInfluence;
+        
+        // Dynamic line width based on connection strength
+        const lineWidth = 0.5 + opacity * 2;
+        
+        ctx.beginPath();
+        ctx.moveTo(node.x, node.y);
+        ctx.lineTo(otherNode.x, otherNode.y);
+        
+        // Gradient line for more depth
+        const gradient = ctx.createLinearGradient(node.x, node.y, otherNode.x, otherNode.y);
+        gradient.addColorStop(0, `rgba(79, 209, 255, ${opacity})`);
+        gradient.addColorStop(0.5, `rgba(100, 220, 255, ${opacity * 1.2})`);
+        gradient.addColorStop(1, `rgba(79, 209, 255, ${opacity})`);
+        
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = lineWidth;
+        ctx.stroke();
+      });
+
+      // Draw node with glow
+      const glowSize = finalSize * 2.5;
+      const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, glowSize);
+      gradient.addColorStop(0, "rgba(79, 209, 255, 0.8)");
+      gradient.addColorStop(0.5, "rgba(79, 209, 255, 0.4)");
+      gradient.addColorStop(1, "rgba(79, 209, 255, 0)");
+      
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, glowSize, 0, Math.PI * 2);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+
+      // Core node
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, finalSize, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(79, 209, 255, 1)";
+      ctx.fill();
+      
+      // Inner highlight
+      ctx.beginPath();
+      ctx.arc(node.x - finalSize * 0.3, node.y - finalSize * 0.3, finalSize * 0.4, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(150, 230, 255, 0.6)";
+      ctx.fill();
     });
 
     const imageBitmap = canvas.transferToImageBitmap();
