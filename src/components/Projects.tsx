@@ -158,12 +158,14 @@ const Projects = () => {
         )}
 
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {projects.map((project, index) => (
+          {projects.map((project, index) => {
+            const slideDirection = index % 2 === 0 ? "animate-slide-in-left" : "animate-slide-in-right";
+            return (
               <div
                 key={index}
                 onClick={() => speakProjectDetails(project)}
                 className={`card-glass ai-border rounded-2xl p-6 sm:p-8 shadow-card transition-all duration-500 group flex flex-col relative overflow-hidden ${
-                  isVisible ? "animate-scale-in" : "opacity-0"
+                  isVisible ? `${slideDirection} animate-scale-in` : "opacity-0"
                 } ${isAIActive ? "cursor-pointer" : ""} ${!isMobile ? "hover:shadow-glow hover:scale-[1.05]" : ""}`}
                 style={{ animationDelay: `${0.2 + index * 0.15}s` }}
               >
@@ -207,7 +209,8 @@ const Projects = () => {
 
               
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
