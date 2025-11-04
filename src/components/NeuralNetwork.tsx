@@ -128,7 +128,7 @@ const NeuralNetwork = memo(() => {
         const deltaTime = currentTime - lastTime;
         
         if (deltaTime >= frameDelay) {
-          ctx.fillStyle = "rgba(22, 22, 26, 0.08)";
+          ctx.fillStyle = "rgba(22, 22, 26, 0.03)";
           ctx.fillRect(0, 0, canvas.width, canvas.height);
 
           const time = currentTime * 0.001;
@@ -173,10 +173,10 @@ const NeuralNetwork = memo(() => {
               const dy = node.y - otherNode.y;
               const distance = Math.sqrt(dx * dx + dy * dy);
               
-              const baseOpacity = (1 - distance / maxDistance) * 0.4;
+              const baseOpacity = (1 - distance / maxDistance) * 0.7;
               const sizeInfluence = (node.size + otherNode.size) / 6;
               const opacity = baseOpacity * sizeInfluence;
-              const lineWidth = 0.5 + opacity * 2;
+              const lineWidth = 1 + opacity * 2;
               
               ctx.beginPath();
               ctx.moveTo(node.x, node.y);
@@ -193,10 +193,10 @@ const NeuralNetwork = memo(() => {
             });
 
             // Draw node with glow
-            const glowSize = finalSize * 2.5;
+            const glowSize = finalSize * 3.5;
             const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, glowSize);
-            gradient.addColorStop(0, "rgba(79, 209, 255, 0.8)");
-            gradient.addColorStop(0.5, "rgba(79, 209, 255, 0.4)");
+            gradient.addColorStop(0, "rgba(79, 209, 255, 1)");
+            gradient.addColorStop(0.4, "rgba(79, 209, 255, 0.6)");
             gradient.addColorStop(1, "rgba(79, 209, 255, 0)");
             
             ctx.beginPath();
@@ -235,7 +235,7 @@ const NeuralNetwork = memo(() => {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 pointer-events-none opacity-30"
+      className="absolute inset-0 pointer-events-none opacity-50"
       style={{ mixBlendMode: "screen" }}
     />
   );

@@ -65,7 +65,7 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
   }
 
   if (type === 'animate' && ctx && canvas) {
-    ctx.fillStyle = "rgba(22, 22, 26, 0.08)";
+    ctx.fillStyle = "rgba(22, 22, 26, 0.03)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const time = (timestamp || 0) * 0.001;
@@ -113,12 +113,12 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
         const distance = Math.sqrt(dx * dx + dy * dy);
         
         // Connection strength based on distance and node sizes
-        const baseOpacity = (1 - distance / maxDistance) * 0.4;
+        const baseOpacity = (1 - distance / maxDistance) * 0.7;
         const sizeInfluence = (node.size + otherNode.size) / 6;
         const opacity = baseOpacity * sizeInfluence;
         
         // Dynamic line width based on connection strength
-        const lineWidth = 0.5 + opacity * 2;
+        const lineWidth = 1 + opacity * 2;
         
         ctx.beginPath();
         ctx.moveTo(node.x, node.y);
@@ -136,10 +136,10 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
       });
 
       // Draw node with glow
-      const glowSize = finalSize * 2.5;
+      const glowSize = finalSize * 3.5;
       const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, glowSize);
-      gradient.addColorStop(0, "rgba(79, 209, 255, 0.8)");
-      gradient.addColorStop(0.5, "rgba(79, 209, 255, 0.4)");
+      gradient.addColorStop(0, "rgba(79, 209, 255, 1)");
+      gradient.addColorStop(0.4, "rgba(79, 209, 255, 0.6)");
       gradient.addColorStop(1, "rgba(79, 209, 255, 0)");
       
       ctx.beginPath();
