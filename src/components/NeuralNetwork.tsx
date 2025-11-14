@@ -22,7 +22,7 @@ const NeuralNetwork = memo(() => {
 
       const resizeCanvas = () => {
         canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight * 3; // Extended to cover multiple sections
+        canvas.height = window.innerHeight;
         
         if (workerRef.current) {
           workerRef.current.postMessage({
@@ -70,7 +70,7 @@ const NeuralNetwork = memo(() => {
 
       const resizeCanvas = () => {
         canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight * 3; // Extended to cover multiple sections
+        canvas.height = window.innerHeight;
       };
 
       resizeCanvas();
@@ -235,11 +235,8 @@ const NeuralNetwork = memo(() => {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute top-0 left-0 w-full pointer-events-none opacity-50"
-      style={{ 
-        mixBlendMode: "screen",
-        height: '300vh'
-      }}
+      className="absolute inset-0 pointer-events-none opacity-50"
+      style={{ mixBlendMode: "screen" }}
     />
   );
 });

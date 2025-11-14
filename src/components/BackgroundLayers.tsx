@@ -5,23 +5,21 @@ import CircuitPattern from './CircuitPattern';
 import AIParticles from './AIParticles';
 
 const BackgroundLayers = memo(() => {
-  const parallaxSlow = useParallax(0.3);
-  const parallaxMedium = useParallax(0.5);
-  const parallaxFast = useParallax(0.7);
+  const parallaxSlow = useParallax(0.2);
+  const parallaxMedium = useParallax(0.4);
+  const parallaxFast = useParallax(0.6);
 
   return (
     <>
       {/* Fixed gradient base */}
       <div className="fixed inset-0 bg-gradient-to-br from-[hsl(var(--hero-gradient-start))] via-background to-[hsl(var(--hero-gradient-end))]" />
       
-      {/* Slow parallax layer - Neural Network (extends across sections) */}
+      {/* Slow parallax layer - Neural Network */}
       <div 
-        className="fixed top-0 left-0 w-full"
+        className="fixed inset-0"
         style={{ 
           transform: `translateY(${parallaxSlow}px)`,
-          willChange: 'transform',
-          height: '300vh',
-          overflow: 'visible'
+          willChange: 'transform'
         }}
       >
         <NeuralNetwork />
