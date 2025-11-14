@@ -10,6 +10,10 @@ const NeuralNetwork = memo(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const targetFps = prefersReducedMotion ? 15 : 30;
+    let running = true;
+
     // Check for OffscreenCanvas support
     const supportsOffscreen = typeof OffscreenCanvas !== 'undefined';
     
@@ -46,21 +50,38 @@ const NeuralNetwork = memo(() => {
       };
 
       let animationId: number;
-      const animate = () => {
-        if (workerRef.current) {
-          workerRef.current.postMessage({
-            type: 'animate',
-            timestamp: Date.now(),
-          });
+      let lastTime = 0;
+      const animate = (time: number) => {
+        if (!running) return;
+        const delta = time - lastTime;
+        if (delta >= 1000 / targetFps) {
+          if (workerRef.current) {
+            workerRef.current.postMessage({
+              type: 'animate',
+              timestamp: Date.now(),
+            });
+          }
+          lastTime = time;
         }
         animationId = requestAnimationFrame(animate);
       };
       
-      animate();
+      animationId = requestAnimationFrame(animate);
+
+      const handleVisibility = () => {
+        running = !document.hidden;
+        if (running) {
+          lastTime = 0;
+          cancelAnimationFrame(animationId);
+          animationId = requestAnimationFrame(animate);
+        }
+      };
+      document.addEventListener('visibilitychange', handleVisibility);
 
       return () => {
         window.removeEventListener("resize", resizeCanvas);
         cancelAnimationFrame(animationId);
+        document.removeEventListener('visibilitychange', handleVisibility);
         workerRef.current?.terminate();
       };
     } else {
@@ -90,8 +111,8 @@ const NeuralNetwork = memo(() => {
       }
 
       const nodes: Node[] = [];
-      const nodeCount = isMobile ? 20 : 50;
-      const maxDistance = isMobile ? 100 : 150;
+      const nodeCount = prefersReducedMotion ? (isMobile ? 12 : 20) : (isMobile ? 18 : 40);
+      const maxDistance = isMobile ? 90 : 140;
 
       for (let i = 0; i < nodeCount; i++) {
         const x = Math.random() * canvas.width;
@@ -121,7 +142,7 @@ const NeuralNetwork = memo(() => {
       const targetInterval = setInterval(changeTargets, 6000);
 
       let lastTime = 0;
-      const fps = 60;
+      const fps = targetFps;
       const frameDelay = 1000 / fps;
 
       const animate = (currentTime: number) => {
@@ -225,9 +246,15 @@ const NeuralNetwork = memo(() => {
 
       animate(0);
 
+      const handleVisibility = () => {
+        running = !document.hidden;
+      };
+      document.addEventListener('visibilitychange', handleVisibility);
+
       return () => {
         window.removeEventListener("resize", resizeCanvas);
         clearInterval(targetInterval);
+        document.removeEventListener('visibilitychange', handleVisibility);
       };
     }
   }, [isMobile]);

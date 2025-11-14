@@ -1,26 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { useVisibilityState } from "@/hooks/use-parallax";
 import { Brain, Sparkles, Cpu } from "lucide-react";
 
 const About = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
+  const { isVisible, hasEntered } = useVisibilityState(sectionRef, { threshold: 0.2 });
 
   return (
     <section id="about" ref={sectionRef} className="relative py-24 px-4 sm:px-6 overflow-hidden holographic-effect">
@@ -37,13 +21,13 @@ const About = () => {
       </div>
 
       <div className="container mx-auto max-w-4xl relative z-10">
-        <div className={`transition-all duration-700 ${isVisible ? "animate-slide-up" : "opacity-0"}`}>
+        <div className={`transition-all duration-700 ${isVisible ? "animate-slide-up" : (hasEntered ? "animate-slide-down" : "opacity-0")}` }>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 text-center">
             <span className="text-gradient">About Me</span>
           </h2>
         </div>
 
-        <div className={`card-glass ai-border rounded-2xl p-6 sm:p-8 md:p-12 shadow-card hover:shadow-glow transition-all duration-700 group relative overflow-hidden ${isVisible ? "animate-scale-in" : "opacity-0"}`} style={{ animationDelay: "0.2s" }}>
+        <div className={`card-glass ai-border rounded-2xl p-6 sm:p-8 md:p-12 shadow-card hover:shadow-glow transition-all duration-700 group relative overflow-hidden ${isVisible ? "animate-scale-in" : (hasEntered ? "animate-scale-out" : "opacity-0")}`} style={{ animationDelay: "0.2s" }}>
           {/* AI sparkle indicator */}
           <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <Sparkles className="h-5 w-5 text-primary animate-pulse" />

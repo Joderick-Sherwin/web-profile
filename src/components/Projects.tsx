@@ -5,6 +5,7 @@ import { useAI } from "@/contexts/AIContext";
 import { toast } from "sonner";
 import ProjectsNetwork from "./ProjectsNetwork";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useIntersectionObserver, useVisibilityState } from "@/hooks/use-parallax";
 
 const projects = [
   {
@@ -86,9 +87,110 @@ const projects = [
   }
 ];
 
+type Project = (typeof projects)[number];
+
+interface ProjectCardProps {
+  project: Project;
+  index: number;
+  isAIActive: boolean;
+  isMobile: boolean;
+  onSpeak: (project: Project) => void;
+}
+
+const ProjectCard = ({ project, index, isAIActive, isMobile, onSpeak }: ProjectCardProps) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isCardVisible = useIntersectionObserver(cardRef, { threshold: 0.2, rootMargin: '150px' });
+
+  return (
+    <div
+      ref={cardRef}
+      onClick={() => onSpeak(project)}
+      className={`card-glass ai-border rounded-2xl p-6 sm:p-8 shadow-card transition-all duration-700 group flex flex-col relative overflow-hidden ${
+        isCardVisible ? "animate-scale-in" : "animate-scale-out"
+      } ${isAIActive ? "cursor-pointer" : ""} ${!isMobile ? "hover:shadow-glow" : ""}`}
+      style={{
+        animationDelay: `${0.15 + index * 0.08}s`,
+        perspective: "1000px",
+        transformStyle: "preserve-3d",
+        willChange: "transform, opacity",
+        contentVisibility: isCardVisible ? 'visible' : 'auto',
+        containIntrinsicSize: '400px',
+      }}
+      onMouseMove={(e) => {
+        if (isMobile) return;
+        const el = e.currentTarget as HTMLDivElement;
+        const rect = el.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateY = ((x - centerX) / centerX) * 6;
+        const rotateX = -((y - centerY) / centerY) * 6;
+        el.style.transform = `rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;
+        el.style.setProperty('--px', `${x}px`);
+        el.style.setProperty('--py', `${y}px`);
+      }}
+      onMouseLeave={(e) => {
+        const el = e.currentTarget as HTMLDivElement;
+        el.style.transform = 'rotateY(0deg) rotateX(0deg)';
+      }}
+    >
+      {/* AI sparkle indicator */}
+      <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <Sparkles className="h-5 w-5 text-primary animate-pulse" />
+      </div>
+
+      {/* Holographic shimmer effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ animation: "holographic-scan 2s linear infinite" }} />
+      {/* Interactive neural glow following cursor */}
+      {!isMobile && (
+        <div
+          className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          style={{
+            background:
+              `radial-gradient(600px circle at var(--px) var(--py), hsl(var(--primary) / 0.18), transparent 40%)`,
+            mixBlendMode: 'screen',
+          }}
+        />
+      )}
+
+      <h3 className={`text-xl sm:text-2xl font-bold mb-4 text-foreground group-hover:text-primary transition-colors duration-300 ${isCardVisible ? 'animate-slide-up' : 'animate-slide-down'}`} style={{ animationDelay: `${0.2 + index * 0.08}s` }}>
+        {project.title}
+      </h3>
+
+      <p className={`text-sm sm:text-base text-foreground/80 mb-6 leading-relaxed flex-grow ${isCardVisible ? 'animate-slide-up' : 'animate-slide-down'}`} style={{ animationDelay: `${0.28 + index * 0.08}s` }}>
+        {project.description}
+      </p>
+
+      <div className={`mb-6 ${isCardVisible ? 'animate-slide-up' : 'animate-slide-down'}`} style={{ animationDelay: `${0.36 + index * 0.08}s` }}>
+        <h4 className="text-sm font-semibold text-secondary mb-3">Key Highlights:</h4>
+        <ul className="space-y-2">
+          {project.highlights.map((highlight, idx) => (
+            <li key={idx} className="flex gap-2 text-sm text-foreground/70">
+              <span className="text-primary mt-0.5">▹</span>
+              <span>{highlight}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className={`flex flex-wrap gap-2 mb-6 ${isCardVisible ? 'animate-slide-up' : 'animate-slide-down'}`} style={{ animationDelay: `${0.44 + index * 0.08}s` }}>
+        {project.technologies.map((tech, techIdx) => (
+          <span
+            key={techIdx}
+            className="px-3 py-1 text-xs bg-primary/10 text-primary rounded-full border border-primary/30 hover:bg-primary/20 transition-colors"
+          >
+            {tech}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const Projects = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const { isVisible, hasEntered } = useVisibilityState(sectionRef, { threshold: 0.2 });
   const { isAIActive } = useAI();
   const [isSpeaking, setIsSpeaking] = useState(false);
   const isMobile = useIsMobile();
@@ -133,18 +235,16 @@ const Projects = () => {
   };
 
   useEffect(() => {
-    // Simple timeout fallback for Safari/older browsers
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 100);
-
-    return () => clearTimeout(timer);
+    // Ensure voices are loaded for better speech synthesis selection
+    if (typeof window !== 'undefined') {
+      window.speechSynthesis.onvoiceschanged = () => {};
+    }
   }, []);
 
   return (
     <section id="projects" ref={sectionRef} className="py-24 px-4 sm:px-6 bg-gradient-to-b from-muted/20 to-background">
       <div className="container mx-auto max-w-6xl">
-        <div className={`transition-all duration-700 ${isVisible ? "animate-slide-up" : "opacity-0"}`}>
+        <div className={`transition-all duration-700 ${isVisible ? "animate-slide-up" : (hasEntered ? "animate-slide-down" : "opacity-0")}` }>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-16 text-center">
             <span className="text-gradient">Featured Projects</span>
           </h2>
@@ -152,61 +252,21 @@ const Projects = () => {
 
         {/* Network Graph Visualization - Desktop Only */}
         {!isMobile && (
-          <div className={`mb-16 transition-all duration-700 ${isVisible ? "animate-fade-in" : "opacity-0"}`} style={{ animationDelay: "0.3s" }}>
+          <div className={`mb-16 transition-all duration-700 ${isVisible ? "animate-slide-up" : "animate-slide-down"}`} style={{ animationDelay: "0.3s" }}>
             <ProjectsNetwork />
           </div>
         )}
 
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {projects.map((project, index) => (
-              <div
-                key={index}
-                onClick={() => speakProjectDetails(project)}
-                className={`card-glass ai-border rounded-2xl p-6 sm:p-8 shadow-card transition-all duration-700 group flex flex-col relative overflow-hidden ${
-                  isVisible ? "animate-scale-in" : "opacity-0"
-                } ${isAIActive ? "cursor-pointer" : ""} ${!isMobile ? "hover:shadow-glow hover:scale-[1.05]" : ""}`}
-                style={{ animationDelay: `${0.2 + index * 0.1}s` }}
-              >
-                {/* AI sparkle indicator */}
-                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-                </div>
-                
-                {/* Holographic shimmer effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ animation: "holographic-scan 2s linear infinite" }} />
-              <h3 className="text-xl sm:text-2xl font-bold mb-4 text-foreground group-hover:text-primary transition-colors duration-300">
-                {project.title}
-              </h3>
-              
-              <p className="text-sm sm:text-base text-foreground/80 mb-6 leading-relaxed flex-grow">
-                {project.description}
-              </p>
-
-              <div className="mb-6">
-                <h4 className="text-sm font-semibold text-secondary mb-3">Key Highlights:</h4>
-                <ul className="space-y-2">
-                  {project.highlights.map((highlight, idx) => (
-                    <li key={idx} className="flex gap-2 text-sm text-foreground/70">
-                      <span className="text-primary mt-0.5">▹</span>
-                      <span>{highlight}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="flex flex-wrap gap-2 mb-6">
-                {project.technologies.map((tech, techIdx) => (
-                  <span
-                    key={techIdx}
-                    className="px-3 py-1 text-xs bg-primary/10 text-primary rounded-full border border-primary/30"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-
-              
-            </div>
+            <ProjectCard
+              key={index}
+              project={project}
+              index={index}
+              isAIActive={isAIActive}
+              isMobile={isMobile}
+              onSpeak={speakProjectDetails}
+            />
           ))}
         </div>
       </div>

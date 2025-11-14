@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useVisibilityState } from "@/hooks/use-parallax";
 import { Code, Brain, Wrench, Users, Sparkles, Zap } from "lucide-react";
 
 const skillCategories = [
@@ -26,24 +27,7 @@ const skillCategories = [
 
 const Skills = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
+  const { isVisible, hasEntered } = useVisibilityState(sectionRef, { threshold: 0.2 });
 
   return (
     <section id="skills" ref={sectionRef} className="relative py-24 px-4 sm:px-6 overflow-hidden">
@@ -54,7 +38,7 @@ const Skills = () => {
       </div>
 
       <div className="container mx-auto max-w-6xl relative z-10">
-        <div className={`transition-all duration-700 ${isVisible ? "animate-slide-up" : "opacity-0"}`}>
+        <div className={`transition-all duration-700 ${isVisible ? "animate-slide-up" : (hasEntered ? "animate-slide-down" : "opacity-0")}` }>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-16 text-center">
             <span className="text-gradient">Skills & Expertise</span>
           </h2>
@@ -67,9 +51,9 @@ const Skills = () => {
               <div
                 key={index}
                 className={`card-glass ai-border rounded-2xl p-6 sm:p-8 shadow-card hover:shadow-glow transition-all duration-500 group hover:scale-[1.02] relative overflow-hidden ${
-                  isVisible ? "animate-scale-in" : "opacity-0"
+                  isVisible ? "animate-scale-in" : (hasEntered ? "animate-scale-out" : "opacity-0")
                 }`}
-                style={{ animationDelay: `${0.2 + index * 0.1}s` }}
+                style={{ animationDelay: `${0.2 + index * 0.1}s`, contentVisibility: isVisible ? 'visible' : 'auto', containIntrinsicSize: '300px' }}
               >
                 {/* Animated decision boundary on hover */}
                 <svg className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ mixBlendMode: "screen" }}>

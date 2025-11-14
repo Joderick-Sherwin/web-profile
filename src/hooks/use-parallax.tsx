@@ -46,3 +46,34 @@ export const useIntersectionObserver = (
 
   return isVisible;
 };
+
+// Visibility state hook that tracks first entry to avoid exit animation on initial mount
+export const useVisibilityState = (
+  ref: RefObject<Element>,
+  options: IntersectionObserverInit = {}
+) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [hasEntered, setHasEntered] = useState(false);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true);
+        setHasEntered(true);
+      } else {
+        setIsVisible(false);
+      }
+    }, {
+      threshold: 0.1,
+      ...options,
+    });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref, options]);
+
+  return { isVisible, hasEntered };
+};

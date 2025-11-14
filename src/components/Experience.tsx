@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
+import { useVisibilityState } from "@/hooks/use-parallax";
 import { Briefcase, Calendar, Sparkles, Cpu } from "lucide-react";
 
 const experiences = [
@@ -28,24 +29,7 @@ const experiences = [
 
 const Experience = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
+  const { isVisible, hasEntered } = useVisibilityState(sectionRef, { threshold: 0.2 });
 
   return (
     <section id="experience" ref={sectionRef} className="relative py-24 px-4 sm:px-6 bg-gradient-to-b from-background to-muted/20 overflow-hidden">
@@ -56,7 +40,7 @@ const Experience = () => {
       </div>
 
       <div className="container mx-auto max-w-5xl relative z-10">
-        <div className={`transition-all duration-700 ${isVisible ? "animate-slide-up" : "opacity-0"}`}>
+        <div className={`transition-all duration-700 ${isVisible ? "animate-slide-up" : (hasEntered ? "animate-slide-down" : "opacity-0")}` }>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-16 text-center">
             <span className="text-gradient">Experience</span>
           </h2>
@@ -71,7 +55,7 @@ const Experience = () => {
               <div
                 key={index}
                 className={`relative transition-all duration-700 ${
-                  isVisible ? "animate-slide-in-right" : "opacity-0"
+                  isVisible ? "animate-slide-in-right" : (hasEntered ? "animate-fade-out" : "opacity-0")
                 }`}
                 style={{ animationDelay: `${0.2 + index * 0.2}s` }}
               >

@@ -68,6 +68,9 @@ const ProjectsNetwork = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let running = true;
+
     const resizeCanvas = () => {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
@@ -121,9 +124,13 @@ const ProjectsNetwork = () => {
     canvas.addEventListener("mousemove", handleMouseMove);
 
     let lastTime = 0;
-    const frameDelay = isMobile ? 1000 / 20 : 1000 / 60; // 20fps on mobile, 60fps on desktop
+    const frameDelay = prefersReducedMotion ? 1000 / 15 : (isMobile ? 1000 / 20 : 1000 / 30);
 
     const animate = (currentTime: number) => {
+      if (!running) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
       if (currentTime - lastTime < frameDelay) {
         animationFrameRef.current = requestAnimationFrame(animate);
         return;
@@ -331,9 +338,18 @@ const ProjectsNetwork = () => {
 
     animationFrameRef.current = requestAnimationFrame(animate);
 
+    const handleVisibility = () => {
+      running = !document.hidden;
+      if (running) {
+        lastTime = 0;
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
     return () => {
       window.removeEventListener("resize", resizeCanvas);
       canvas.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener('visibilitychange', handleVisibility);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }

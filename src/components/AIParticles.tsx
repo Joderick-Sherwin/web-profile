@@ -11,6 +11,10 @@ const AIParticles = memo(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const targetFps = prefersReducedMotion ? 15 : 30; // throttle frames for performance
+    let running = true;
+
     const supportsOffscreen = typeof OffscreenCanvas !== 'undefined';
     
     if (supportsOffscreen) {
@@ -62,17 +66,34 @@ const AIParticles = memo(() => {
       window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
       let animationId: number;
-      const animate = () => {
-        workerRef.current?.postMessage({ type: 'animate' });
+      let lastTime = 0;
+      const animate = (time: number) => {
+        if (!running) return;
+        const delta = time - lastTime;
+        if (delta >= 1000 / targetFps) {
+          workerRef.current?.postMessage({ type: 'animate' });
+          lastTime = time;
+        }
         animationId = requestAnimationFrame(animate);
       };
       
-      animate();
+      animationId = requestAnimationFrame(animate);
+
+      const handleVisibility = () => {
+        running = !document.hidden;
+        if (running) {
+          lastTime = 0;
+          cancelAnimationFrame(animationId);
+          animationId = requestAnimationFrame(animate);
+        }
+      };
+      document.addEventListener('visibilitychange', handleVisibility);
 
       return () => {
         window.removeEventListener("resize", resizeCanvas);
         window.removeEventListener("mousemove", handleMouseMove);
         cancelAnimationFrame(animationId);
+        document.removeEventListener('visibilitychange', handleVisibility);
         workerRef.current?.terminate();
       };
     } else {
@@ -100,7 +121,7 @@ const AIParticles = memo(() => {
       }
 
       const particles: Particle[] = [];
-      const particleCount = isMobile ? 30 : 80;
+      const particleCount = prefersReducedMotion ? (isMobile ? 10 : 20) : (isMobile ? 25 : 60);
       const colors = ["hsl(200, 95%, 55%)", "hsl(270, 60%, 60%)", "hsl(280, 70%, 65%)"];
 
       for (let i = 0; i < particleCount; i++) {
@@ -127,7 +148,7 @@ const AIParticles = memo(() => {
       window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
       let lastTime = 0;
-      const fps = 60;
+      const fps = targetFps;
       const frameDelay = 1000 / fps;
 
       const animate = (currentTime: number) => {
@@ -196,9 +217,15 @@ const AIParticles = memo(() => {
 
       animate(0);
 
+      const handleVisibility = () => {
+        running = !document.hidden;
+      };
+      document.addEventListener('visibilitychange', handleVisibility);
+
       return () => {
         window.removeEventListener("resize", resizeCanvas);
         window.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener('visibilitychange', handleVisibility);
       };
     }
   }, [isMobile]);
