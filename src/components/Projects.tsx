@@ -158,16 +158,14 @@ const Projects = () => {
         )}
 
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {projects.map((project, index) => {
-            const slideDirection = index % 2 === 0 ? "animate-slide-in-left" : "animate-slide-in-right";
-            return (
+          {projects.map((project, index) => (
               <div
                 key={index}
                 onClick={() => speakProjectDetails(project)}
-                className={`card-glass ai-border rounded-2xl p-6 sm:p-8 shadow-card transition-all duration-500 group flex flex-col relative overflow-hidden ${
-                  isVisible ? `${slideDirection} animate-scale-in` : "opacity-0"
+                className={`card-glass ai-border rounded-2xl p-6 sm:p-8 shadow-card transition-all duration-700 group flex flex-col relative overflow-hidden ${
+                  isVisible ? "animate-scale-in" : "opacity-0"
                 } ${isAIActive ? "cursor-pointer" : ""} ${!isMobile ? "hover:shadow-glow hover:scale-[1.05]" : ""}`}
-                style={{ animationDelay: `${0.2 + index * 0.15}s` }}
+                style={{ animationDelay: `${0.2 + index * 0.1}s` }}
               >
                 {/* AI sparkle indicator */}
                 <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -176,15 +174,15 @@ const Projects = () => {
                 
                 {/* Holographic shimmer effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ animation: "holographic-scan 2s linear infinite" }} />
-              <h3 className="text-xl sm:text-2xl font-bold mb-4 text-foreground group-hover:text-primary transition-colors duration-300 animate-slide-up" style={{ animationDelay: "0.05s" }}>
+              <h3 className="text-xl sm:text-2xl font-bold mb-4 text-foreground group-hover:text-primary transition-colors duration-300">
                 {project.title}
               </h3>
               
-              <p className="text-sm sm:text-base text-foreground/80 mb-6 leading-relaxed flex-grow animate-slide-up" style={{ animationDelay: "0.1s" }}>
+              <p className="text-sm sm:text-base text-foreground/80 mb-6 leading-relaxed flex-grow">
                 {project.description}
               </p>
 
-              <div className="mb-6 animate-slide-up" style={{ animationDelay: "0.15s" }}>
+              <div className="mb-6">
                 <h4 className="text-sm font-semibold text-secondary mb-3">Key Highlights:</h4>
                 <ul className="space-y-2">
                   {project.highlights.map((highlight, idx) => (
@@ -196,7 +194,7 @@ const Projects = () => {
                 </ul>
               </div>
 
-              <div className="flex flex-wrap gap-2 mb-6 animate-slide-up" style={{ animationDelay: "0.25s" }}>
+              <div className="flex flex-wrap gap-2 mb-6">
                 {project.technologies.map((tech, techIdx) => (
                   <span
                     key={techIdx}
@@ -209,8 +207,7 @@ const Projects = () => {
 
               
             </div>
-            );
-          })}
+          ))}
         </div>
       </div>
     </section>
