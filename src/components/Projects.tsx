@@ -176,15 +176,15 @@ const Projects = () => {
                 
                 {/* Holographic shimmer effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ animation: "holographic-scan 2s linear infinite" }} />
-              <h3 className="text-xl sm:text-2xl font-bold mb-4 text-foreground group-hover:text-primary transition-colors duration-300">
+              <h3 className="text-xl sm:text-2xl font-bold mb-4 text-foreground group-hover:text-primary transition-colors duration-300 animate-slide-up" style={{ animationDelay: "0.05s" }}>
                 {project.title}
               </h3>
               
-              <p className="text-sm sm:text-base text-foreground/80 mb-6 leading-relaxed flex-grow">
+              <p className="text-sm sm:text-base text-foreground/80 mb-6 leading-relaxed flex-grow animate-slide-up" style={{ animationDelay: "0.1s" }}>
                 {project.description}
               </p>
 
-              <div className="mb-6">
+              <div className="mb-6 animate-slide-up" style={{ animationDelay: "0.15s" }}>
                 <h4 className="text-sm font-semibold text-secondary mb-3">Key Highlights:</h4>
                 <ul className="space-y-2">
                   {project.highlights.map((highlight, idx) => (
@@ -196,7 +196,7 @@ const Projects = () => {
                 </ul>
               </div>
 
-              <div className="flex flex-wrap gap-2 mb-6">
+              <div className="flex flex-wrap gap-2 mb-6 animate-slide-up" style={{ animationDelay: "0.25s" }}>
                 {project.technologies.map((tech, techIdx) => (
                   <span
                     key={techIdx}
