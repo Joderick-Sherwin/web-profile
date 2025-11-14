@@ -21,7 +21,7 @@ interface WorkerMessage {
 let particles: Particle[] = [];
 let canvas: OffscreenCanvas | null = null;
 let ctx: OffscreenCanvasRenderingContext2D | null = null;
-let particleCount = 80;
+let particleCount = 50; // Reduced from 80
 let isMobile = false;
 let mouseX = 0;
 let mouseY = 0;
@@ -38,7 +38,7 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
   if (type === 'init' && width && height) {
     canvas = new OffscreenCanvas(width, height);
     ctx = canvas.getContext('2d');
-    particleCount = mobile ? 30 : 80;
+    particleCount = mobile ? 20 : 50; // Reduced for better performance
     isMobile = mobile || false;
 
     particles = [];
