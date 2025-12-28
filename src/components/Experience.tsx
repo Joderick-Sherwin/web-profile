@@ -4,6 +4,17 @@ import { Briefcase, Calendar, Sparkles, Cpu } from "lucide-react";
 
 const experiences = [
   {
+    title: "AI Engineer Intern",
+    company: "Technow Innovations",
+    period: "Sep 2025 - Sep 2025",
+    responsibilities: [
+      "Worked as an AI Engineer Intern on a multimodal Retrieval-Augmented Generation (RAG) platform",
+      "Built and refined ML pipelines involving embeddings, document chunking, and intelligent retrieval",
+      "Implemented vector search using pgvector and optimized retrieval accuracy and performance",
+      "Collaborated with cross-functional teams to design, test, and iterate real-world AI systems"
+    ]
+  },
+  {
     title: "Machine Learning Engineer Intern",
     company: "Revol Process Solutions Pvt. Ltd",
     period: "Jan 2024 - July 2024",
