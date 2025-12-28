@@ -20,6 +20,18 @@ const projects = [
     technologies: ["Python", "TensorFlow", "Keras", "OpenCV", "Flask"]
   },
   {
+    title: " Project Lexivion",
+    description: "Combines document retrieval with generative AI models to provide highly accurate and context-aware responses.",
+    readOutDetails: "Project Lexivion built for Technow Innovations implements a Retrieval Augmented Generation system that combines document retrieval with generative AI models. It uses vector databases to find relevant information and feeds it to large language models for highly accurate, context-aware responses. This hybrid approach significantly improves AI output reliability and relevance, making it perfect for enterprise question-answering systems and knowledge management platforms.",
+    highlights: [
+      "Hybrid retrieval and generation approach",
+      "Improved AI output reliability and relevance",
+      "Suitable for enterprise Q&A and knowledge management",
+      "Built for Technow Innovations"
+    ],
+    technologies: ["Python", "NLP", "Vector Databases", "LLMs", "RAG Architecture"]
+  },
+  {
     title: "Analyst Recommendation System",
     description: "Developed an AI-driven recommendation system to match analysts with projects based on expertise, performance, and task context.",
     readOutDetails: "This is an AI-driven recommendation system I developed to intelligently match analysts with projects. It considers their expertise, past performance, and the specific context of each task. Using machine learning algorithms, it automates the analyst selection process and provides dynamic real-time recommendations, significantly improving project efficiency and analyst utilization.",
@@ -29,17 +41,6 @@ const projects = [
       "Supports dynamic real-time recommendations"
     ],
     technologies: ["Python", "Scikit-learn", "Pandas", "Flask", "SQL"]
-  },
-  {
-    title: "Animoji Simulation Project",
-    description: "Developed a real-time facial tracking system using computer vision to replicate user expressions on 3D animated characters.",
-    readOutDetails: "The Animoji Simulation Project is a real-time facial tracking system I built using computer vision. It captures user expressions and replicates them on 3D animated characters instantly. Using OpenCV and MediaPipe, it tracks facial movements with high precision, enabling interactive personalized animations. This technology has applications in messaging platforms, gaming, and virtual communication.",
-    highlights: [
-      "RReal-time 3D wireframe rendering",
-      "Preserves anonymity and identity",
-      "Useful in legal and security applications"
-    ],
-    technologies: ["Python", "OpenCV", "MediaPipe"]
   },
   {
     title: "Project WraithCast",
@@ -53,15 +54,15 @@ const projects = [
     technologies: ["Python", "Computer Vision", "MediaPipe", "Real-time Processing"]
   },
   {
-    title: "RAG Project",
-    description: "Combines document retrieval with generative AI models to provide highly accurate and context-aware responses.",
-    readOutDetails: "This RAG project implements a Retrieval Augmented Generation system that combines document retrieval with generative AI models. It uses vector databases to find relevant information and feeds it to large language models for highly accurate, context-aware responses. This hybrid approach significantly improves AI output reliability and relevance, making it perfect for enterprise question-answering systems and knowledge management platforms.",
+    title: "Animoji Simulation Project",
+    description: "Developed a real-time facial tracking system using computer vision to replicate user expressions on 3D animated characters.",
+    readOutDetails: "The Animoji Simulation Project is a real-time facial tracking system I built using computer vision. It captures user expressions and replicates them on 3D animated characters instantly. Using OpenCV and MediaPipe, it tracks facial movements with high precision, enabling interactive personalized animations. This technology has applications in messaging platforms, gaming, and virtual communication.",
     highlights: [
-      "Hybrid retrieval and generation approach",
-      "Improved AI output reliability and relevance",
-      "Suitable for enterprise Q&A and knowledge management"
+      "RReal-time 3D wireframe rendering",
+      "Preserves anonymity and identity",
+      "Useful in legal and security applications"
     ],
-    technologies: ["Python", "NLP", "Vector Databases", "LLMs", "RAG Architecture"]
+    technologies: ["Python", "OpenCV", "MediaPipe"]
   },
   {
     title: "Mental Health Chatbot",
