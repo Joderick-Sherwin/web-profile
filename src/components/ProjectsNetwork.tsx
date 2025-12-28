@@ -18,10 +18,10 @@ interface ProjectNode {
 
 const projects = [
   { title: "TerraDefender", technologies: ["Python", "TensorFlow", "Keras", "OpenCV"], color: "hsl(200, 95%, 55%)" },
-  { title: "Analyst System", technologies: ["Python", "Scikit-learn", "Pandas", "Flask"], color: "hsl(270, 60%, 60%)" },
+  { title: "Analyst Recommendation System", technologies: ["Python", "Scikit-learn", "Pandas", "Flask"], color: "hsl(270, 60%, 60%)" },
   { title: "Animoji", technologies: ["Python", "OpenCV", "MediaPipe"], color: "hsl(280, 70%, 65%)" },
   { title: "WraithCast", technologies: ["Python", "Computer Vision"], color: "hsl(200, 95%, 55%)" },
-  { title: "RAG Project", technologies: ["Python", "NLP", "LLMs"], color: "hsl(270, 60%, 60%)" },
+  { title: "Project Lexivion", technologies: ["Python", "NLP", "LLMs"], color: "hsl(270, 60%, 60%)" },
   { title: "Mental Health Bot", technologies: ["Python", "NLP"], color: "hsl(280, 70%, 65%)" },
   { title: "Speech to Text", technologies: ["Python", "PyQt5"], color: "hsl(200, 95%, 55%)" },
 ];
