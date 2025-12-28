@@ -36,7 +36,7 @@ const Index = () => {
         {/* Footer */}
         <footer className="relative py-8 text-center text-muted-foreground border-t border-border/50 backdrop-blur-sm">
           <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent" />
-          <p className="relative z-10">© 2025 Joderick Sherwin J. <br>Built with passion and code.</p>
+          <p className="relative z-10">© 2025 Joderick Sherwin J. <br></br>Built with passion and code.</p>
         </footer>
       </div>
     </div>
