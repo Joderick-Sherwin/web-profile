@@ -20,7 +20,7 @@ PROJECTS:
 2. Analyst Recommendation System: AI-driven system matching analysts with projects using Scikit-learn, Pandas
 3. Animoji Simulation: Real-time facial tracking system using OpenCV, MediaPipe
 4. Project WraithCast: Real-time wireframe camera system for 3D skeletal representations
-5. RAG Project: Retrieval Augmented Generation system combining document retrieval with generative AI
+5. Project Lexivion: Retrieval Augmented Generation system combining document retrieval with generative AI
 6. Mental Health Chatbot: Compassionate AI using NLP for emotional support
 7. Speech to Text Converter: PyQt5-based transcription application
 
